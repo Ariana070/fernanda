@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRUMAKI ERP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --jade:#00C896;--jade-dark:#009970;--jade-hover:#00D9A3;--jade-dim:rgba(0,200,150,.12);
+  --bg:#121212;--surface:#1E1E1E;--surface2:#252525;--surface3:#2A2A2A;
+  --border:#2D2D2D;--text:#F8F8F8;--muted:#9CA3AF;--muted2:#6B7280;
+  --success:#22C55E;--warning:#EAB308;--error:#EF4444;--info:#3B82F6;
+  --gold:#F59E0B;
+}
+html,body{height:100%;overflow:hidden;font-size:14px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:230px;min-height:100vh;background:var(--bg);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;
+  overflow-y:auto;overflow-x:hidden;
+  transition:width .2s;
+}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--border);}
+.sb-brand{font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--jade);letter-spacing:3px;}
+.sb-sub{font-size:9px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:1px;}
+.sb-section{padding:14px 16px 4px;font-size:9px;color:var(--muted2);letter-spacing:2px;text-transform:uppercase;font-family:'Poppins',sans-serif;}
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 14px;margin:1px 6px;
+  border-radius:7px;cursor:pointer;
+  color:var(--muted);font-size:12.5px;
+  transition:all .15s;border-left:3px solid transparent;
+}
+.sb-item:hover{background:var(--surface);color:var(--text);}
+.sb-item.active{background:var(--jade-dim);color:var(--jade);border-left-color:var(--jade);border-radius:0 7px 7px 0;margin-left:0;padding-left:17px;}
+.sb-item .ico{font-size:15px;width:18px;text-align:center;}
+.sb-badge{margin-left:auto;background:var(--jade);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding:12px;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:7px;border-radius:8px;cursor:pointer;}
+.sb-user:hover{background:var(--surface);}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--jade),var(--jade-dark));display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-uname{font-size:12px;font-weight:500;color:var(--text);}
+.sb-urole{font-size:10px;color:var(--muted);}
+
+/* ── MAIN ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 22px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.tb-left .tb-title{font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;}
+.tb-left .tb-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.ib{width:34px;height:34px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:14px;transition:all .15s;}
+.ib:hover{border-color:var(--jade);color:var(--jade);}
+.btn-p{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--jade);border:none;border-radius:7px;color:#fff;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-p:hover{background:var(--jade-hover);}
+.btn-s{display:flex;align-items:center;gap:6px;padding:6px 12px;background:transparent;border:1px solid var(--jade);border-radius:7px;color:var(--jade);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-s:hover{background:var(--jade-dim);}
+.content{flex:1;overflow-y:auto;padding:20px 22px;}
+
+/* ── SCREEN SYSTEM ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── LOGIN ── */
+#scr-login{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;z-index:999;
+}
+.login-wrap{width:100%;max-width:380px;padding:20px;}
+.login-logo{font-family:'Poppins',sans-serif;font-size:42px;font-weight:800;color:var(--jade);letter-spacing:5px;text-align:center;}
+.login-tag{font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-bottom:32px;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;}
+.login-box h2{font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;margin-bottom:20px;}
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--jade);}
+.field input::placeholder{color:var(--muted);}
+.field select option{background:var(--surface2);}
+.login-hint{margin-top:12px;font-size:11px;color:var(--muted);text-align:center;}
+.login-hint span{color:var(--jade);font-weight:600;}
+.login-alert{display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--error);margin-bottom:12px;}
+
+/* ── TABS ── */
+.tabs-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab{padding:9px 16px;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--jade);border-bottom-color:var(--jade);}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:box-shadow .2s;}
+.card:hover{box-shadow:0 0 18px var(--jade-dim);}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:box-shadow .2s;}
+.kpi:hover{box-shadow:0 0 18px var(--jade-dim);}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.kpi.k1::before{background:var(--jade);}
+.kpi.k2::before{background:var(--success);}
+.kpi.k3::before{background:var(--warning);}
+.kpi.k4::before{background:var(--info);}
+.kpi-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-family:'Poppins',sans-serif;margin-bottom:6px;}
+.kpi-val{font-family:'Poppins',sans-serif;font-size:24px;font-weight:700;line-height:1;margin-bottom:7px;}
+.kpi.k1 .kpi-val{color:var(--jade);}
+.kpi.k2 .kpi-val{color:var(--success);}
+.kpi.k3 .kpi-val{color:var(--warning);}
+.kpi.k4 .kpi-val{color:var(--info);}
+.kpi-ico{position:absolute;top:14px;right:14px;font-size:20px;opacity:.15;}
+.badge-up{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;background:rgba(34,197,94,.1);color:var(--success);}
+.badge-down{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;background:rgba(239,68,68,.1);color:var(--error);}
+.badge-neu{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;background:rgba(59,130,246,.1);color:var(--info);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:8px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--bg);}
+thead th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--jade);text-transform:uppercase;letter-spacing:1px;font-family:'Poppins',sans-serif;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:nth-child(even){background:rgba(255,255,255,.015);}
+tbody tr:hover{background:var(--jade-dim);}
+tbody td{padding:9px 12px;color:var(--text);}
+td.mut{color:var(--muted);}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:999px;}
+.pill::before{content:'●';font-size:6px;}
+.pill-ok{background:rgba(34,197,94,.1);color:var(--success);}
+.pill-proc{background:rgba(0,200,150,.1);color:var(--jade);}
+.pill-pend{background:rgba(234,179,8,.1);color:var(--warning);}
+.pill-err{background:rgba(239,68,68,.1);color:var(--error);}
+.pill-info{background:rgba(59,130,246,.1);color:var(--info);}
+
+/* ── GRID LAYOUTS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.grid2-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
+.mb16{margin-bottom:16px;}
+.mb20{margin-bottom:20px;}
+.gap-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+/* ── POS ── */
+.pos-wrap{display:grid;grid-template-columns:1fr 340px;gap:16px;height:calc(100vh - 140px);}
+.pos-left{overflow-y:auto;}
+.pos-right{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.pos-rhead{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface2);}
+.pos-rtitle{font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;}
+.pos-items{flex:1;overflow-y:auto;padding:0;}
+.pos-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);}
+.pos-item:hover{background:var(--surface2);}
+.pos-iname{flex:1;font-size:12.5px;font-weight:500;}
+.pos-iprice{font-size:11px;color:var(--muted);}
+.pos-qty{display:flex;align-items:center;gap:6px;}
+.qb{background:var(--surface3);border:1px solid var(--border);border-radius:5px;color:var(--text);width:24px;height:24px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.qb:hover{border-color:var(--jade);color:var(--jade);}
+.pos-foot{padding:14px 16px;border-top:1px solid var(--border);background:var(--surface2);}
+.pos-row{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;color:var(--muted);}
+.pos-row.total{font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--jade);border-top:1px solid var(--border);margin-top:7px;padding-top:10px;}
+.cat-pills{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
+.cpill{padding:5px 13px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:11.5px;cursor:pointer;transition:all .15s;}
+.cpill.active{background:var(--jade);border-color:var(--jade);color:#fff;}
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.prod-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;cursor:pointer;transition:all .15s;text-align:center;}
+.prod-card:hover{border-color:var(--jade);box-shadow:0 0 14px var(--jade-dim);}
+.prod-emo{font-size:26px;margin-bottom:6px;}
+.prod-name{font-size:12px;font-weight:600;margin-bottom:3px;}
+.prod-desc{font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.3;}
+.prod-price{color:var(--jade);font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;}
+.pago-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.pago-btn{padding:7px;background:var(--surface3);border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:11px;cursor:pointer;text-align:center;transition:all .15s;}
+.pago-btn.sel{background:var(--jade-dim);border-color:var(--jade);color:var(--jade);}
+
+/* ── MESAS ── */
+.mesa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.mesa{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .18s;}
+.mesa:hover{box-shadow:0 0 14px var(--jade-dim);}
+.mesa.libre{border-color:rgba(34,197,94,.3);}
+.mesa.ocupada{border-color:rgba(0,200,150,.35);background:rgba(0,200,150,.04);}
+.mesa.reservada{border-color:rgba(234,179,8,.3);}
+.mesa-n{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;margin-bottom:3px;}
+.mesa.libre .mesa-n{color:var(--success);}
+.mesa.ocupada .mesa-n{color:var(--jade);}
+.mesa.reservada .mesa-n{color:var(--warning);}
+.mesa-s{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+.mesa-i{font-size:10px;color:var(--muted);margin-top:3px;}
+
+/* ── INVENTORY STOCK BAR ── */
+.sbar{height:4px;border-radius:999px;background:var(--border);margin-top:3px;}
+.sfill{height:100%;border-radius:999px;}
+
+/* ── COCINA ── */
+.cocina-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.pedido-c{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.pc-head{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.pc-num{font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:var(--jade);}
+.pc-time{font-size:10px;color:var(--muted);}
+.pc-body{padding:10px 14px;}
+.pc-line{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed var(--border);}
+.pc-line:last-child{border-bottom:none;}
+.pc-foot{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--border);}
+.timer{font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;}
+.timer.fast{color:var(--success);}
+.timer.mid{color:var(--warning);}
+.timer.slow{color:var(--error);}
+
+/* ── CRM ── */
+.crm-head{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.cliente-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.cliente-row:last-child{border-bottom:none;}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--jade),var(--jade-dark));display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.nivel{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;}
+.nivel-gold{background:rgba(245,158,11,.15);color:var(--gold);}
+.nivel-silver{background:rgba(156,163,175,.15);color:#9CA3AF;}
+.nivel-regular{background:var(--jade-dim);color:var(--jade);}
+.pts-bar-wrap{width:80px;}
+.pts-bar{height:3px;border-radius:999px;background:var(--border);}
+.pts-fill{height:100%;border-radius:999px;background:var(--jade);}
+
+/* ── CARTA ── */
+.menu-edit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.menu-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .18s;}
+.menu-card:hover{box-shadow:0 0 16px var(--jade-dim);}
+.mc-img{height:90px;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:44px;}
+.mc-body{padding:12px;}
+.mc-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+.mc-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:8px;}
+.mc-foot{display:flex;justify-content:space-between;align-items:center;}
+.mc-price{color:var(--jade);font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;}
+.mc-margin{font-size:10px;color:var(--success);}
+
+/* ── SUNAT ── */
+.sunat-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.comp-type-btns{display:flex;gap:8px;margin-bottom:16px;}
+.comp-btn{padding:8px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12.5px;cursor:pointer;transition:all .15s;}
+.comp-btn.active{background:var(--jade-dim);border-color:var(--jade);color:var(--jade);}
+
+/* ── DASHBOARD ── */
+.chart-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-row2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* ── FINANCIERO ── */
+.balance-row{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--border);}
+.balance-row:last-child{border-bottom:none;}
+.balance-row.bold{font-weight:700;font-size:13px;color:var(--jade);}
+.balance-row.total-row{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--jade);border-top:2px solid var(--jade);margin-top:6px;padding-top:8px;}
+.cuadre-ok{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;font-size:12.5px;color:var(--success);margin-bottom:14px;}
+.cuadre-err{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:12.5px;color:var(--error);margin-bottom:14px;}
+
+/* ── ROLES ── */
+.role-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.role-name{font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;}
+.perm-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;background:var(--jade-dim);color:var(--jade);margin:2px;}
+.perm-tag.off{background:var(--surface2);color:var(--muted);}
+
+/* ── FIDELIZACION ── */
+.fidel-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
+.fidel-icon{font-size:36px;margin-bottom:8px;}
+.fidel-pts{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;color:var(--jade);}
+.fidel-lbl{font-size:11px;color:var(--muted);}
+
+/* ── DEPRECIACION ── */
+.dep-chart{height:180px;margin-bottom:8px;}
+.activo-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.activo-ico{font-size:22px;}
+.activo-inf{flex:1;}
+.activo-name{font-size:13px;font-weight:500;}
+.activo-det{font-size:11px;color:var(--muted);}
+.activo-dep{font-size:12px;color:var(--warning);font-weight:600;}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:500;display:none;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
+.modal h3{font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px;}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;border-top:1px solid var(--border);padding-top:14px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.ok{background:var(--jade);color:#fff;}
+.toast.err{background:var(--error);color:#fff;}
+.toast.warn{background:var(--warning);color:#111;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="scr-login">
+  <div class="login-wrap">
+    <div class="login-logo">TRUMAKI</div>
+    <div class="login-tag">ERP System 2026 · Trujillo, Perú</div>
+    <div class="login-box">
+      <h2>🔐 Iniciar sesión</h2>
+      <div id="login-alert" class="login-alert">Usuario o contraseña incorrectos</div>
+      <div class="field"><label>Rol / Usuario</label>
+        <select id="li-rol">
+          <option value="admin">Administrador General</option>
+          <option value="gerente">Gerente</option>
+          <option value="cajero">Cajero / POS</option>
+          <option value="cocina">Cocina</option>
+          <option value="contador">Contador</option>
+          <option value="delivery">Delivery</option>
+        </select>
+      </div>
+      <div class="field"><label>Contraseña</label><input id="li-pass" type="password" placeholder="••••••" value="1234"></div>
+      <button class="btn-p" style="width:100%;justify-content:center;padding:10px;" onclick="doLogin()">Entrar al sistema</button>
+      <div class="login-hint">Demo: cualquier usuario · contraseña <span>1234</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ APP SHELL ═══════════ -->
+<div id="sidebar">
+  <div class="sb-logo"><div class="sb-brand">TRUMAKI</div><div class="sb-sub">ERP 2026</div></div>
+  <div class="sb-section">Principal</div>
+  <div class="sb-item active" onclick="go('dashboard',this)"><span class="ico">📊</span>Dashboard</div>
+  <div class="sb-item" onclick="go('pos',this)"><span class="ico">💳</span>POS · Caja<span class="sb-badge" id="badge-pos">3</span></div>
+  <div class="sb-item" onclick="go('pedidos',this)"><span class="ico">🧾</span>Pedidos<span class="sb-badge" id="badge-ped">5</span></div>
+  <div class="sb-item" onclick="go('mesas',this)"><span class="ico">🪑</span>Mesas</div>
+  <div class="sb-item" onclick="go('cocina',this)"><span class="ico">👨‍🍳</span>Cocina<span class="sb-badge" id="badge-coc">4</span></div>
+  <div class="sb-section">Comercial</div>
+  <div class="sb-item" onclick="go('carta',this)"><span class="ico">🍣</span>Carta Digital</div>
+  <div class="sb-item" onclick="go('ecommerce',this)"><span class="ico">🛒</span>E-commerce</div>
+  <div class="sb-item" onclick="go('delivery',this)"><span class="ico">🛵</span>Delivery<span class="sb-badge">2</span></div>
+  <div class="sb-section">Clientes</div>
+  <div class="sb-item" onclick="go('crm',this)"><span class="ico">👥</span>CRM Clientes</div>
+  <div class="sb-item" onclick="go('fidelizacion',this)"><span class="ico">⭐</span>Fidelización</div>
+  <div class="sb-section">Inventario</div>
+  <div class="sb-item" onclick="go('inventario',this)"><span class="ico">📦</span>Inventario</div>
+  <div class="sb-item" onclick="go('compras',this)"><span class="ico">🛍️</span>Compras</div>
+  <div class="sb-section">Finanzas</div>
+  <div class="sb-item" onclick="go('activos',this)"><span class="ico">🏗️</span>Activos / PCGE 33</div>
+  <div class="sb-item" onclick="go('financiamiento',this)"><span class="ico">🏦</span>Financiamiento</div>
+  <div class="sb-item" onclick="go('estados',this)"><span class="ico">📈</span>Estados Financieros</div>
+  <div class="sb-item" onclick="go('sunat',this)"><span class="ico">🧾</span>Facturación SUNAT</div>
+  <div class="sb-item" onclick="go('tributacion',this)"><span class="ico">📋</span>Tributación 2026</div>
+  <div class="sb-section">Sistema</div>
+  <div class="sb-item" onclick="go('reportes',this)"><span class="ico">📄</span>Reportes</div>
+  <div class="sb-item" onclick="go('roles',this)"><span class="ico">🔐</span>Roles y Accesos</div>
+  <div class="sb-item" onclick="go('auditoria',this)"><span class="ico">🔍</span>Auditoría</div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="avatar" id="sb-avatar">AD</div>
+      <div><div class="sb-uname" id="sb-uname">Admin TRUMAKI</div><div class="sb-urole" id="sb-urole">Administrador</div></div>
+      <div style="margin-left:auto;color:var(--muted);cursor:pointer;font-size:13px;" onclick="doLogout()" title="Salir">⏻</div>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left"><div class="tb-title" id="tb-title">Dashboard General</div><div class="tb-sub" id="tb-sub">Viernes 13 Jun 2025 · Turno Noche 5pm–12am</div></div>
+    <div class="tb-right">
+      <div class="ib" title="Buscar">🔍</div>
+      <div class="ib" title="Notificaciones" id="notif-btn" onclick="showToast('📦 Stock bajo: Queso crema · Salmón','warn')">🔔</div>
+      <button class="btn-p" id="tb-action" onclick="handleAction()">+ Nuevo pedido</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+<!-- ══════════════════════════════════════════════════ DASHBOARD ══ -->
+<div id="scr-dashboard" class="screen active">
+  <div class="tabs-bar">
+    <div class="tab active" onclick="tabSwitch(this,'dash-hoy')">Hoy</div>
+    <div class="tab" onclick="tabSwitch(this,'dash-sem')">Semana</div>
+    <div class="tab" onclick="tabSwitch(this,'dash-mes')">Mes</div>
+    <div class="tab" onclick="tabSwitch(this,'dash-anual')">Anual</div>
+  </div>
+  <div id="dash-hoy">
+    <div class="kpi-grid">
+      <div class="kpi k1"><span class="kpi-ico">💰</span><div class="kpi-lbl">Ventas del día</div><div class="kpi-val">S/ 3,840</div><span class="badge-up">▲ +18% vs ayer</span></div>
+      <div class="kpi k2"><span class="kpi-ico">📊</span><div class="kpi-lbl">Utilidad neta</div><div class="kpi-val">S/ 1,536</div><span class="badge-up">40% margen</span></div>
+      <div class="kpi k3"><span class="kpi-ico">🍣</span><div class="kpi-lbl">Pedidos</div><div class="kpi-val">96</div><span class="badge-neu">= igual que ayer</span></div>
+      <div class="kpi k4"><span class="kpi-ico">🎫</span><div class="kpi-lbl">Ticket promedio</div><div class="kpi-val">S/ 40.00</div><span class="badge-up">▲ +S/3.50</span></div>
+    </div>
+    <div class="chart-row mb16">
+      <div class="card"><div class="card-h"><div><div class="card-title">Ventas por hora</div><div class="card-sub">Ingresos acumulados del turno</div></div><select style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:3px 7px;"><option>Hoy</option><option>Ayer</option></select></div><div style="height:200px;"><canvas id="ch-horas"></canvas></div></div>
+      <div class="card"><div class="card-h"><div class="card-title">Canales de venta</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"><span style="font-size:10px;color:var(--muted);">■ Local 46%</span><span style="font-size:10px;color:var(--muted);">■ Delivery 34%</span><span style="font-size:10px;color:var(--muted);">■ Rappi 20%</span></div><div style="height:170px;"><canvas id="ch-canales"></canvas></div></div>
+    </div>
+    <div class="grid3 mb16">
+      <div class="card"><div class="card-h"><div class="card-title">🔥 Top Makis hoy</div></div>
+        <div id="top-prods"></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">⚡ Acciones rápidas</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;" onmouseover="this.style.borderColor='var(--jade)'" onmouseout="this.style.borderColor='var(--border)'" onclick="go('pos',null)">💳 Abrir caja</div>
+          <div style="padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;" onmouseover="this.style.borderColor='var(--jade)'" onmouseout="this.style.borderColor='var(--border)'" onclick="go('sunat',null)">🧾 Facturar</div>
+          <div style="padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;" onmouseover="this.style.borderColor='var(--jade)'" onmouseout="this.style.borderColor='var(--border)'" onclick="go('inventario',null)">📦 Stock</div>
+          <div style="padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;" onmouseover="this.style.borderColor='var(--jade)'" onmouseout="this.style.borderColor='var(--border)'" onclick="go('reportes',null)">📄 Reportes</div>
+          <div style="padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;" onmouseover="this.style.borderColor='var(--jade)'" onmouseout="this.style.borderColor='var(--border)'" onclick="go('crm',null)">👥 Clientes</div>
+          <div style="padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;" onmouseover="this.style.borderColor='var(--jade)'" onmouseout="this.style.borderColor='var(--border)'" onclick="go('mesas',null)">🪑 Mesas</div>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Estado mesas</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;">
+            <span style="font-size:10px;padding:3px 9px;border-radius:999px;background:rgba(34,197,94,.1);color:var(--success);">● 5 Libres</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:999px;background:rgba(0,200,150,.1);color:var(--jade);">● 5 Ocupadas</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:999px;background:rgba(234,179,8,.1);color:var(--warning);">● 2 Reservadas</span>
+          </div>
+        </div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">🔔 Actividad reciente</div></div>
+        <div id="actividad-feed"></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-title">Ventas semana actual</div></div><div style="height:160px;"><canvas id="ch-semana"></canvas></div></div>
+      <div class="card"><div class="card-h"><div class="card-title">KPIs Financieros</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="padding:10px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--jade);">39.8%</div><div style="font-size:10px;color:var(--muted);">Margen bruto</div></div>
+          <div style="padding:10px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--success);">2.4x</div><div style="font-size:10px;color:var(--muted);">Liquidez</div></div>
+          <div style="padding:10px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--info);">S/48.2K</div><div style="font-size:10px;color:var(--muted);">Ventas mes</div></div>
+          <div style="padding:10px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--warning);">18.7%</div><div style="font-size:10px;color:var(--muted);">ROI mensual</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ POS ══ -->
+<div id="scr-pos" class="screen">
+  <div class="pos-wrap">
+    <div class="pos-left">
+      <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;">
+        <div class="cat-pills" id="pos-cats" style="flex:1;margin-bottom:0;"></div>
+        <input placeholder="🔍 Buscar producto…" style="background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text);font-size:12px;outline:none;width:180px;" oninput="posFilter(this.value)">
+      </div>
+      <div class="prod-grid" id="pos-grid"></div>
+    </div>
+    <div class="pos-right">
+      <div class="pos-rhead">
+        <div class="pos-rtitle">🧾 Pedido actual</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;" id="pos-mesa-lbl">Mesa 3 · Carlos M.</div>
+      </div>
+      <div class="pos-items" id="pos-items"><div style="text-align:center;padding:30px;color:var(--muted);font-size:12px;">Agrega productos ←</div></div>
+      <div class="pos-foot">
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Método de pago</div>
+          <div class="pago-btns">
+            <div class="pago-btn sel" id="pago-efectivo" onclick="selPago('efectivo',this)">💵 Efectivo</div>
+            <div class="pago-btn" id="pago-yape" onclick="selPago('yape',this)">📱 Yape</div>
+            <div class="pago-btn" id="pago-tarjeta" onclick="selPago('tarjeta',this)">💳 Tarjeta</div>
+            <div class="pago-btn" id="pago-plin" onclick="selPago('plin',this)">💜 Plin</div>
+          </div>
+        </div>
+        <div class="pos-row"><span>Subtotal</span><span id="pos-sub">S/ 0.00</span></div>
+        <div class="pos-row"><span>IGV 18%</span><span id="pos-igv">S/ 0.00</span></div>
+        <div class="pos-row"><span>Descuento</span><span id="pos-desc" style="color:var(--success);">S/ 0.00</span></div>
+        <div class="pos-row total"><span>TOTAL</span><span id="pos-total">S/ 0.00</span></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn-s" style="flex:1;" onclick="clearPos()">Limpiar</button>
+          <button class="btn-p" style="flex:1;" onclick="cobrarPos()">Cobrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ PEDIDOS ══ -->
+<div id="scr-pedidos" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="tabs-bar" style="margin-bottom:0;border:0;"><div class="tab active">Todos</div><div class="tab">En proceso</div><div class="tab">Delivery</div><div class="tab">Historial</div></div>
+    <button class="btn-p" onclick="openModal('modal-pedido')">+ Nuevo pedido</button>
+  </div>
+  <div class="card" style="padding:0;">
+    <div class="tbl-wrap">
+      <table id="tbl-pedidos">
+        <thead><tr><th>#</th><th>Mesa/Canal</th><th>Cliente</th><th>Items</th><th>Total</th><th>Pago</th><th>Estado</th><th>Hora</th><th></th></tr></thead>
+        <tbody id="tbody-pedidos"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ MESAS ══ -->
+<div id="scr-mesas" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div><div class="card-title">Salón TRUMAKI · Av. Larco</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">12 mesas · Cap. 48 personas</div></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-s">+ Reserva</button><button class="btn-p" onclick="showToast('Mesas actualizadas','ok')">🔄 Actualizar</button>
+    </div>
+  </div>
+  <div class="mesa-grid" id="mesa-grid"></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="kpi k1"><div class="kpi-lbl">Ocupación</div><div class="kpi-val">58.3%</div><span class="badge-up">7 ocupadas</span></div>
+    <div class="kpi k2"><div class="kpi-lbl">Personas en local</div><div class="kpi-val">24</div><span class="badge-neu">de 48 cap.</span></div>
+    <div class="kpi k3"><div class="kpi-lbl">T° prom. mesa</div><div class="kpi-val">42 min</div><span class="badge-up">OK</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ COCINA ══ -->
+<div id="scr-cocina" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="tabs-bar" style="margin-bottom:0;border:0;">
+      <div class="tab active" onclick="cocinaTabs('preparando',this)">Preparando</div>
+      <div class="tab" onclick="cocinaTabs('listo',this)">Listo para entregar</div>
+      <div class="tab" onclick="cocinaTabs('entregado',this)">Historial</div>
+    </div>
+    <span style="font-size:12px;color:var(--muted);">Actualiza cada 30s</span>
+  </div>
+  <div class="cocina-grid" id="cocina-grid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ CARTA ══ -->
+<div id="scr-carta" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="tabs-bar" style="margin-bottom:0;border:0;">
+      <div class="tab active" onclick="cartaTabs('makis',this)">Makis</div>
+      <div class="tab" onclick="cartaTabs('bebidas',this)">Bebidas</div>
+      <div class="tab" onclick="cartaTabs('postres',this)">Postres</div>
+    </div>
+    <button class="btn-p">+ Nuevo plato</button>
+  </div>
+  <div class="menu-edit-grid" id="carta-grid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ ECOMMERCE ══ -->
+<div id="scr-ecommerce" class="screen">
+  <div class="kpi-grid mb16">
+    <div class="kpi k1"><div class="kpi-lbl">Órdenes online hoy</div><div class="kpi-val">18</div><span class="badge-up">▲ +4 vs ayer</span></div>
+    <div class="kpi k2"><div class="kpi-lbl">Ingresos online</div><div class="kpi-val">S/ 1,240</div><span class="badge-up">▲ +22%</span></div>
+    <div class="kpi k3"><div class="kpi-lbl">Ticket e-commerce</div><div class="kpi-val">S/ 68.88</div><span class="badge-up">▲ +S/8</span></div>
+    <div class="kpi k4"><div class="kpi-lbl">Conversión</div><div class="kpi-val">34%</div><span class="badge-neu">visitas→pedidos</span></div>
+  </div>
+  <div class="card"><div class="card-h"><div class="card-title">Pedidos e-commerce activos</div><button class="btn-s">Ver tienda</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Canal</th><th>Estado</th><th>Hora</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--jade);font-weight:600;">#EC-041</td><td>María L.</td><td>Maki Acevichado x2, Chicha x1</td><td style="font-weight:600;">S/ 48.00</td><td><span class="pill pill-info">Web</span></td><td><span class="pill pill-proc">En proceso</span></td><td class="mut">20:12</td></tr>
+      <tr><td style="color:var(--jade);font-weight:600;">#EC-040</td><td>Raúl T.</td><td>Maki Dragon x1, Mochi x2</td><td style="font-weight:600;">S/ 54.00</td><td><span class="pill pill-err">Rappi</span></td><td><span class="pill pill-ok">Entregado</span></td><td class="mut">19:50</td></tr>
+      <tr><td style="color:var(--jade);font-weight:600;">#EC-039</td><td>Sofía V.</td><td>Combo Premium x1</td><td style="font-weight:600;">S/ 78.00</td><td><span class="pill pill-proc">WhatsApp</span></td><td><span class="pill pill-pend">Pendiente</span></td><td class="mut">19:38</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ DELIVERY ══ -->
+<div id="scr-delivery" class="screen">
+  <div class="kpi-grid mb16">
+    <div class="kpi k1"><div class="kpi-lbl">Entregas hoy</div><div class="kpi-val">22</div><span class="badge-up">▲ +5 vs ayer</span></div>
+    <div class="kpi k2"><div class="kpi-lbl">En camino</div><div class="kpi-val">2</div><span class="badge-neu">activas</span></div>
+    <div class="kpi k3"><div class="kpi-lbl">Tiempo prom.</div><div class="kpi-val">28 min</div><span class="badge-up">Objetivo 30</span></div>
+    <div class="kpi k4"><div class="kpi-lbl">Ingresos delivery</div><div class="kpi-val">S/ 1,304</div><span class="badge-up">▲ +18%</span></div>
+  </div>
+  <div class="card"><div class="card-h"><div class="card-title">Órdenes de delivery</div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>#Orden</th><th>Canal</th><th>Cliente</th><th>Dirección</th><th>Total</th><th>Estado</th><th>ETA</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--jade);font-weight:600;">#D-041</td><td><span class="pill pill-err">Rappi</span></td><td>Carlos M.</td><td class="mut">Av. Larco 324, Trujillo</td><td style="font-weight:600;">S/ 68.00</td><td><span class="pill pill-proc">En camino</span></td><td style="color:var(--jade);font-weight:600;">8 min</td></tr>
+      <tr><td style="color:var(--jade);font-weight:600;">#D-040</td><td><span class="pill pill-info">Web</span></td><td>Ana R.</td><td class="mut">Calle Los Pinos 102</td><td style="font-weight:600;">S/ 88.00</td><td><span class="pill pill-pend">Preparando</span></td><td style="color:var(--warning);font-weight:600;">22 min</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ CRM ══ -->
+<div id="scr-crm" class="screen">
+  <div class="crm-head">
+    <input placeholder="🔍 Buscar cliente, DNI, teléfono…" style="flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;">
+    <select style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;"><option>Todos los niveles</option><option>Gold</option><option>Silver</option><option>Regular</option></select>
+    <button class="btn-p">+ Nuevo cliente</button>
+  </div>
+  <div class="card" style="padding:0;"><div class="tbl-wrap">
+    <table><thead><tr><th>Cliente</th><th>DNI</th><th>Teléfono</th><th>Visitas</th><th>Último pedido</th><th>Total gastado</th><th>T° prom.</th><th>Puntos</th><th>Nivel</th><th></th></tr></thead>
+    <tbody id="tbody-crm"></tbody></table>
+  </div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ FIDELIZACION ══ -->
+<div id="scr-fidelizacion" class="screen">
+  <div class="grid3 mb16">
+    <div class="fidel-card"><div class="fidel-icon">🥇</div><div class="fidel-pts">Gold</div><div class="fidel-lbl">+500 pts · Beneficios premium</div></div>
+    <div class="fidel-card"><div class="fidel-icon">🥈</div><div class="fidel-pts">Silver</div><div class="fidel-lbl">200–499 pts · Beneficios intermedios</div></div>
+    <div class="fidel-card"><div class="fidel-icon">🍣</div><div class="fidel-pts">Regular</div><div class="fidel-lbl">0–199 pts · Inicio del programa</div></div>
+  </div>
+  <div class="grid2 mb16">
+    <div class="card"><div class="card-h"><div class="card-title">Tabla de beneficios</div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Puntos</th><th>Premio</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--jade);font-weight:700;">100 pts</td><td>Bebida gratis</td><td class="mut">S/ 8–12</td></tr>
+        <tr><td style="color:var(--jade);font-weight:700;">300 pts</td><td>Entrada gratis (Gyoza/Edamame)</td><td class="mut">S/ 18</td></tr>
+        <tr><td style="color:var(--jade);font-weight:700;">500 pts</td><td>Descuento 20% en pedido</td><td class="mut">Variable</td></tr>
+        <tr><td style="color:var(--jade);font-weight:700;">1000 pts</td><td>Combo premium 2 personas</td><td class="mut">S/ 80</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="card"><div class="card-h"><div class="card-title">Regla de acumulación</div></div>
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:48px;margin-bottom:8px;">💰</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;color:var(--jade);">S/ 1 = 1 Punto</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px;">Aplica en local, delivery y ecommerce</div>
+        <div style="margin-top:14px;padding:12px;background:var(--surface2);border-radius:8px;font-size:11px;color:var(--muted);">Los puntos se acreditan automáticamente al confirmar el pago. Vigencia: 12 meses desde la última compra.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="card-h"><div class="card-title">🏆 Ranking de clientes</div></div>
+    <div id="fidel-ranking"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ INVENTARIO ══ -->
+<div id="scr-inventario" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="tabs-bar" style="margin-bottom:0;border:0;"><div class="tab active">Insumos</div><div class="tab">Empaques</div><div class="tab">Bebidas</div><div class="tab">Kardex</div></div>
+    <button class="btn-p">+ Agregar insumo</button>
+  </div>
+  <div class="kpi-grid mb16" style="grid-template-columns:repeat(4,1fr);">
+    <div class="kpi k1"><div class="kpi-lbl">Total insumos</div><div class="kpi-val">34</div><span class="badge-neu">items activos</span></div>
+    <div class="kpi k3"><div class="kpi-lbl">Stock bajo</div><div class="kpi-val">4</div><span class="badge-down">⚠ Requieren compra</span></div>
+    <div class="kpi k4"><div class="kpi-lbl">Valor total stock</div><div class="kpi-val">S/ 4,820</div><span class="badge-up">▲ actualizado</span></div>
+    <div class="kpi k2"><div class="kpi-lbl">Costo diario</div><div class="kpi-val">S/ 960</div><span class="badge-neu">prom. 30 días</span></div>
+  </div>
+  <div class="card" style="padding:0;"><div class="tbl-wrap">
+    <table><thead><tr><th>Insumo</th><th>Categoría</th><th>Stock</th><th>Mín.</th><th>Unidad</th><th>Precio unit.</th><th>Valor total</th><th>Estado</th><th>Nivel</th></tr></thead>
+    <tbody id="tbody-inv"></tbody></table>
+  </div></div>
+</div>
+
+<!-- ═════════════════════════════════════════════════ COMPRAS ══ -->
+<div id="scr-compras" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="card-title">Registro de compras</div>
+    <button class="btn-p">+ Nueva compra</button>
+  </div>
+  <div class="kpi-grid mb16" style="grid-template-columns:repeat(4,1fr);">
+    <div class="kpi k1"><div class="kpi-lbl">Compras mes</div><div class="kpi-val">S/ 12,480</div><span class="badge-down">▼ -3% vs anterior</span></div>
+    <div class="kpi k3"><div class="kpi-lbl">Proveedores activos</div><div class="kpi-val">8</div><span class="badge-neu">homologados</span></div>
+    <div class="kpi k4"><div class="kpi-lbl">Facturas pendientes</div><div class="kpi-val">3</div><span class="badge-down">▼ Por pagar</span></div>
+    <div class="kpi k2"><div class="kpi-lbl">% Costo/Venta</div><div class="kpi-val">39.4%</div><span class="badge-up">OK</span></div>
+  </div>
+  <div class="card" style="padding:0;"><div class="tbl-wrap">
+    <table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Productos</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>N° Factura</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="mut">10/06/25</td><td>Pescados del Norte SAC</td><td>Salmón 20kg, Atún 15kg</td><td class="mut">S/ 1,440.68</td><td class="mut">S/ 259.32</td><td style="font-weight:600;">S/ 1,700.00</td><td class="mut">F001-02341</td><td><span class="pill pill-ok">Pagada</span></td></tr>
+      <tr><td class="mut">09/06/25</td><td>Distribuidora Arrocera Norte</td><td>Arroz sushi 50kg</td><td class="mut">S/ 338.98</td><td class="mut">S/ 61.02</td><td style="font-weight:600;">S/ 400.00</td><td class="mut">B001-08821</td><td><span class="pill pill-ok">Pagada</span></td></tr>
+      <tr><td class="mut">08/06/25</td><td>Makoto Importaciones</td><td>Alga nori, wasabi, jengibre</td><td class="mut">S/ 677.97</td><td class="mut">S/ 122.03</td><td style="font-weight:600;">S/ 800.00</td><td class="mut">F001-00512</td><td><span class="pill pill-pend">Pendiente</span></td></tr>
+    </tbody></table>
+  </div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ ACTIVOS ══ -->
+<div id="scr-activos" class="screen">
+  <div class="tabs-bar">
+    <div class="tab active" onclick="tabSwitch(this,'act-tang')">Tangibles PCGE 33</div>
+    <div class="tab" onclick="tabSwitch(this,'act-intang')">Intangibles PCGE 34</div>
+    <div class="tab" onclick="tabSwitch(this,'act-dep')">Depreciaciones</div>
+    <div class="tab" onclick="tabSwitch(this,'act-cap')">Capital de Trabajo</div>
+  </div>
+  <div id="act-tang">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="card-title">Activos Tangibles — Cuenta 33</div><button class="btn-p">+ Agregar activo</button>
+    </div>
+    <div class="kpi-grid mb16">
+      <div class="kpi k1"><div class="kpi-lbl">Total activos</div><div class="kpi-val">S/ 68,400</div><span class="badge-neu">valor original</span></div>
+      <div class="kpi k3"><div class="kpi-lbl">Dep. acumulada</div><div class="kpi-val">S/ 8,420</div><span class="badge-down">▼ 12.3%</span></div>
+      <div class="kpi k2"><div class="kpi-lbl">Valor en libros</div><div class="kpi-val">S/ 59,980</div><span class="badge-up">actualizado</span></div>
+      <div class="kpi k4"><div class="kpi-lbl">Dep. año actual</div><div class="kpi-val">S/ 5,680</div><span class="badge-neu">proyectada</span></div>
+    </div>
+    <div id="activos-list"></div>
+  </div>
+  <div id="act-intang" style="display:none;">
+    <div class="kpi-grid mb16">
+      <div class="kpi k1"><div class="kpi-lbl">Total intangibles</div><div class="kpi-val">S/ 12,800</div><span class="badge-neu">Cuenta 34</span></div>
+      <div class="kpi k2"><div class="kpi-lbl">Amortizados</div><div class="kpi-val">S/ 3,120</div><span class="badge-down">24.4%</span></div>
+    </div>
+    <div class="card" style="padding:0;"><div class="tbl-wrap"><table><thead><tr><th>Concepto</th><th>Subcuenta</th><th>Valor</th><th>Vida útil</th><th>Amortiz. anual</th><th>Valor residual</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:500;">Marca TRUMAKI</td><td class="mut">341</td><td>S/ 5,000</td><td class="mut">10 años</td><td class="mut">S/ 500</td><td class="mut">S/ 4,500</td></tr>
+      <tr><td style="font-weight:500;">Software ERP (licencia)</td><td class="mut">346</td><td>S/ 3,500</td><td class="mut">4 años</td><td class="mut">S/ 875</td><td class="mut">S/ 2,625</td></tr>
+      <tr><td style="font-weight:500;">Publicidad inicial</td><td class="mut">349</td><td>S/ 2,800</td><td class="mut">2 años</td><td class="mut">S/ 1,400</td><td class="mut">S/ 1,400</td></tr>
+      <tr><td style="font-weight:500;">Dominio + Hosting (2 años)</td><td class="mut">346</td><td>S/ 1,500</td><td class="mut">1 año</td><td class="mut">S/ 1,500</td><td class="mut">S/ 0</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div id="act-dep" style="display:none;">
+    <div class="card mb16"><div class="card-h"><div class="card-title">Depreciación acumulada por activo</div></div><div style="height:200px;"><canvas id="ch-dep"></canvas></div></div>
+    <div class="card"><div class="card-h"><div class="card-title">Tasas SUNAT aplicadas</div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Tipo de activo</th><th>Tasa anual</th><th>Método</th><th>Cuenta PCGE</th></tr></thead>
+      <tbody>
+        <tr><td>Edificaciones / Construcciones</td><td style="color:var(--jade);">3%</td><td class="mut">Línea recta</td><td class="mut">391</td></tr>
+        <tr><td>Maquinaria industrial</td><td style="color:var(--jade);">10%</td><td class="mut">Línea recta</td><td class="mut">391</td></tr>
+        <tr><td>Muebles y enseres</td><td style="color:var(--jade);">10%</td><td class="mut">Línea recta</td><td class="mut">391</td></tr>
+        <tr><td>Equipos de cómputo</td><td style="color:var(--jade);">25%</td><td class="mut">Línea recta</td><td class="mut">391</td></tr>
+        <tr><td>Equipos electrónicos</td><td style="color:var(--jade);">20%</td><td class="mut">Línea recta</td><td class="mut">391</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <div id="act-cap" style="display:none;">
+    <div class="card"><div class="card-h"><div class="card-title">Capital de Trabajo Inicial</div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Insumo</th><th>Cantidad inicial</th><th>Unidad</th><th>Precio unit.</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500;">Arroz para sushi</td><td>80</td><td class="mut">kg</td><td class="mut">S/ 5.50</td><td style="font-weight:600;">S/ 440</td></tr>
+        <tr><td style="font-weight:500;">Alga Nori</td><td>200</td><td class="mut">paquetes</td><td class="mut">S/ 12.00</td><td style="font-weight:600;">S/ 2,400</td></tr>
+        <tr><td style="font-weight:500;">Salmón fresco</td><td>30</td><td class="mut">kg</td><td class="mut">S/ 38.00</td><td style="font-weight:600;">S/ 1,140</td></tr>
+        <tr><td style="font-weight:500;">Atún fresco</td><td>20</td><td class="mut">kg</td><td class="mut">S/ 32.00</td><td style="font-weight:600;">S/ 640</td></tr>
+        <tr><td style="font-weight:500;">Langostino</td><td>15</td><td class="mut">kg</td><td class="mut">S/ 28.00</td><td style="font-weight:600;">S/ 420</td></tr>
+        <tr><td style="font-weight:500;">Palta / Aguacate</td><td>60</td><td class="mut">unid.</td><td class="mut">S/ 2.50</td><td style="font-weight:600;">S/ 150</td></tr>
+        <tr><td style="font-weight:500;">Queso crema</td><td>20</td><td class="mut">kg</td><td class="mut">S/ 22.00</td><td style="font-weight:600;">S/ 440</td></tr>
+        <tr><td style="font-weight:500;">Salsas (unagi, teriyaki, sriracha)</td><td>10</td><td class="mut">kg c/u</td><td class="mut">S/ 18.00</td><td style="font-weight:600;">S/ 540</td></tr>
+        <tr><td style="font-weight:500;">Bebidas (variadas)</td><td>120</td><td class="mut">unid.</td><td class="mut">S/ 3.00</td><td style="font-weight:600;">S/ 360</td></tr>
+        <tr><td style="font-weight:500;">Empaques delivery</td><td>500</td><td class="mut">unid.</td><td class="mut">S/ 1.20</td><td style="font-weight:600;">S/ 600</td></tr>
+        <tr style="background:var(--jade-dim);"><td style="font-weight:700;color:var(--jade);" colspan="4">TOTAL CAPITAL DE TRABAJO</td><td style="font-weight:800;color:var(--jade);font-family:'Poppins',sans-serif;">S/ 7,130</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ FINANCIAMIENTO ══ -->
+<div id="scr-financiamiento" class="screen">
+  <div class="tabs-bar">
+    <div class="tab active" onclick="tabSwitch(this,'fin-resumen')">Resumen</div>
+    <div class="tab" onclick="tabSwitch(this,'fin-simulador')">Simulador</div>
+    <div class="tab" onclick="tabSwitch(this,'fin-cronograma')">Cronograma</div>
+  </div>
+  <div id="fin-resumen">
+    <div class="grid2 mb16">
+      <div class="card"><div class="card-h"><div class="card-title">Estructura de financiamiento</div></div>
+        <div style="height:200px;"><canvas id="ch-fin"></canvas></div>
+        <div style="display:flex;gap:12px;margin-top:8px;justify-content:center;">
+          <span style="font-size:11px;color:var(--muted);">■ Capital propio 60%</span>
+          <span style="font-size:11px;color:var(--muted);">■ Financiamiento 40%</span>
+        </div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">Detalle PCGE</div></div>
+        <div class="balance-row"><span>Capital propio (PCGE 50)</span><span style="color:var(--jade);font-weight:600;">S/ 48,000</span></div>
+        <div class="balance-row"><span>Préstamo bancario (PCGE 45)</span><span style="color:var(--warning);font-weight:600;">S/ 32,000</span></div>
+        <div class="balance-row bold"><span>TOTAL INVERSIÓN</span><span>S/ 80,000</span></div>
+        <div style="margin-top:14px;padding:12px;background:var(--surface2);border-radius:8px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Préstamo Bancario — BCP</div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span class="mut">TEA</span><span style="color:var(--jade);">18% anual</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span class="mut">Plazo</span><span>36 meses</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;"><span class="mut">Cuota mensual</span><span style="font-weight:600;color:var(--jade);">S/ 1,156.97</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="fin-simulador" style="display:none;">
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-title">Parámetros del préstamo</div></div>
+        <div class="field"><label>Monto solicitado (S/)</label><input type="number" id="sim-monto" value="32000"></div>
+        <div class="field"><label>TEA (%)</label><input type="number" id="sim-tea" value="18" step="0.5"></div>
+        <div class="field"><label>Plazo (meses)</label><input type="number" id="sim-plazo" value="36"></div>
+        <div class="field"><label>Sistema de amortización</label><select id="sim-tipo"><option value="frances">Francés (cuota fija)</option><option value="aleman">Alemán (amortización fija)</option><option value="americano">Americano (solo intereses)</option></select></div>
+        <button class="btn-p" style="width:100%;justify-content:center;" onclick="simular()">Calcular</button>
+      </div>
+      <div class="card" id="sim-resultado"><div style="text-align:center;padding:40px;color:var(--muted);">Ingresa los parámetros y presiona Calcular</div></div>
+    </div>
+  </div>
+  <div id="fin-cronograma" style="display:none;">
+    <div class="card" style="padding:0;"><div class="tbl-wrap"><table><thead><tr><th>Mes</th><th>Cuota</th><th>Capital</th><th>Interés</th><th>Saldo</th></tr></thead>
+    <tbody id="tbody-cronograma"></tbody></table></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ ESTADOS FINANCIEROS ══ -->
+<div id="scr-estados" class="screen">
+  <div class="tabs-bar">
+    <div class="tab active" onclick="tabSwitch(this,'ef-balance')">Balance General</div>
+    <div class="tab" onclick="tabSwitch(this,'ef-resultados')">Estado de Resultados</div>
+    <div class="tab" onclick="tabSwitch(this,'ef-flujo')">Flujo de Caja</div>
+  </div>
+  <div id="ef-balance">
+    <div class="cuadre-ok">✅ Balance cuadrado · ACTIVO = PASIVO + PATRIMONIO · S/ 72,450 = S/ 72,450</div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-title">ACTIVO</div></div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Activo Corriente</div>
+        <div class="balance-row"><span>Caja y Bancos (10)</span><span>S/ 8,240</span></div>
+        <div class="balance-row"><span>Cuentas por cobrar (12)</span><span>S/ 1,200</span></div>
+        <div class="balance-row"><span>Inventarios (20)</span><span>S/ 4,820</span></div>
+        <div class="balance-row bold"><span>Total Activo Corriente</span><span>S/ 14,260</span></div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:12px 0 8px;">Activo No Corriente</div>
+        <div class="balance-row"><span>Inmuebles, maq. y equipo (33)</span><span>S/ 68,400</span></div>
+        <div class="balance-row"><span>– Depreciación acumulada</span><span style="color:var(--error);">(S/ 8,420)</span></div>
+        <div class="balance-row"><span>Intangibles (34)</span><span>S/ 12,800</span></div>
+        <div class="balance-row"><span>– Amortización acumulada</span><span style="color:var(--error);">(S/ 3,120)</span></div>
+        <div class="balance-row"><span>Otros activos no corrientes</span><span>S/ 1,530</span></div>
+        <div class="balance-row bold"><span>Total Activo No Corriente</span><span>S/ 71,190</span></div>
+        <div class="balance-row total-row"><span>TOTAL ACTIVO</span><span>S/ 72,450</span></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">PASIVO Y PATRIMONIO</div></div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Pasivo Corriente</div>
+        <div class="balance-row"><span>Cuentas por pagar (42)</span><span>S/ 3,200</span></div>
+        <div class="balance-row"><span>Tributos por pagar (40)</span><span>S/ 1,840</span></div>
+        <div class="balance-row"><span>Remuneraciones (41)</span><span>S/ 2,400</span></div>
+        <div class="balance-row bold"><span>Total Pasivo Corriente</span><span>S/ 7,440</span></div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:12px 0 8px;">Pasivo No Corriente</div>
+        <div class="balance-row"><span>Préstamos a largo plazo (45)</span><span>S/ 17,010</span></div>
+        <div class="balance-row bold"><span>Total Pasivo No Corriente</span><span>S/ 17,010</span></div>
+        <div class="balance-row bold"><span>TOTAL PASIVO</span><span>S/ 24,450</span></div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:12px 0 8px;">Patrimonio</div>
+        <div class="balance-row"><span>Capital social (50)</span><span>S/ 48,000</span></div>
+        <div class="balance-row"><span>Resultados del ejercicio</span><span style="color:var(--success);">S/ 12,480</span></div>
+        <div class="balance-row"><span>Resultados acumulados</span><span style="color:var(--success);">S/ (12,480)</span></div>
+        <div class="balance-row bold"><span>TOTAL PATRIMONIO</span><span>S/ 48,000</span></div>
+        <div class="balance-row total-row"><span>TOTAL PASIVO + PATRIMONIO</span><span>S/ 72,450</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="ef-resultados" style="display:none;">
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-title">Estado de Resultados — Junio 2025</div></div>
+        <div class="balance-row"><span>Ventas netas</span><span style="color:var(--jade);font-weight:600;">S/ 48,230</span></div>
+        <div class="balance-row"><span>Costo de ventas (69)</span><span style="color:var(--error);">(S/ 19,292)</span></div>
+        <div class="balance-row bold"><span>UTILIDAD BRUTA</span><span>S/ 28,938</span></div>
+        <div style="margin:8px 0;font-size:11px;color:var(--muted);">Gastos operativos:</div>
+        <div class="balance-row"><span>Planillas (62)</span><span style="color:var(--error);">(S/ 8,400)</span></div>
+        <div class="balance-row"><span>Alquiler local (63)</span><span style="color:var(--error);">(S/ 2,500)</span></div>
+        <div class="balance-row"><span>Servicios (63)</span><span style="color:var(--error);">(S/ 800)</span></div>
+        <div class="balance-row"><span>Marketing (63)</span><span style="color:var(--error);">(S/ 600)</span></div>
+        <div class="balance-row"><span>Depreciación (68)</span><span style="color:var(--error);">(S/ 473)</span></div>
+        <div class="balance-row bold"><span>UTILIDAD OPERATIVA (EBIT)</span><span>S/ 16,165</span></div>
+        <div class="balance-row"><span>Gastos financieros (67)</span><span style="color:var(--error);">(S/ 480)</span></div>
+        <div class="balance-row bold"><span>UTILIDAD ANTES IMPUESTOS</span><span>S/ 15,685</span></div>
+        <div class="balance-row"><span>Impuesto a la renta MYPE 10%</span><span style="color:var(--error);">(S/ 1,569)</span></div>
+        <div class="balance-row"><span>Participaciones (8%)</span><span style="color:var(--error);">(S/ 1,255)</span></div>
+        <div class="balance-row total-row"><span>UTILIDAD NETA</span><span>S/ 12,861</span></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">Indicadores clave</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:var(--jade);">60.0%</div><div style="font-size:10px;color:var(--muted);">Margen bruto</div></div>
+          <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:var(--success);">26.7%</div><div style="font-size:10px;color:var(--muted);">Margen neto</div></div>
+          <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:var(--info);">S/16,638</div><div style="font-size:10px;color:var(--muted);">EBITDA</div></div>
+          <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:var(--warning);">18.7%</div><div style="font-size:10px;color:var(--muted);">ROI mensual</div></div>
+        </div>
+        <div style="height:140px;margin-top:14px;"><canvas id="ch-resultados"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div id="ef-flujo" style="display:none;">
+    <div class="card"><div class="card-h"><div class="card-title">Flujo de Caja Proyectado — 6 meses</div></div><div style="height:220px;"><canvas id="ch-flujo"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SUNAT ══ -->
+<div id="scr-sunat" class="screen">
+  <div class="tabs-bar">
+    <div class="tab active" onclick="tabSwitch(this,'su-emitir')">Emitir comprobante</div>
+    <div class="tab" onclick="tabSwitch(this,'su-registro')">Registro de ventas</div>
+    <div class="tab" onclick="tabSwitch(this,'su-ple')">PLE SUNAT</div>
+  </div>
+  <div id="su-emitir">
+    <div class="comp-type-btns">
+      <div class="comp-btn active" onclick="selComp('boleta',this)">🧾 Boleta electrónica</div>
+      <div class="comp-btn" onclick="selComp('factura',this)">📄 Factura electrónica</div>
+      <div class="comp-btn" onclick="selComp('nota-credito',this)">✂️ Nota de crédito</div>
+      <div class="comp-btn" onclick="selComp('nota-debito',this)">➕ Nota de débito</div>
+    </div>
+    <div class="grid2-3">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Datos del comprobante</div></div>
+        <div class="sunat-form">
+          <div class="field"><label>Serie</label><input value="B001" id="su-serie"></div>
+          <div class="field"><label>Correlativo</label><input value="00215" id="su-correlativo"></div>
+          <div class="field"><label>Fecha emisión</label><input type="date" value="2025-06-13" id="su-fecha"></div>
+          <div class="field"><label>DNI / RUC cliente</label><input placeholder="Ej: 44123456" id="su-doc"></div>
+          <div class="field" style="grid-column:1/-1;"><label>Nombre / Razón social</label><input value="Consumidor Final" id="su-nombre"></div>
+          <div class="field"><label>Correo (envío PDF)</label><input placeholder="cliente@email.com" id="su-email"></div>
+          <div class="field"><label>Método de pago</label><select id="su-pago"><option>Efectivo</option><option>Yape</option><option>Tarjeta</option><option>Plin</option><option>Transferencia</option></select></div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:8px;">
+          <div class="card-title" style="margin-bottom:10px;">Detalle de productos</div>
+          <div class="tbl-wrap"><table><thead><tr><th>Descripción</th><th>Cant.</th><th>P. unit.</th><th>Total</th><th></th></tr></thead>
+          <tbody id="su-items">
+            <tr><td><input value="Dragon Roll" style="background:transparent;border:none;color:var(--text);font-size:12px;width:150px;outline:none;"></td><td><input type="number" value="2" style="background:transparent;border:none;color:var(--text);font-size:12px;width:40px;outline:none;" oninput="calcSunat()"></td><td><input type="number" value="22" style="background:transparent;border:none;color:var(--text);font-size:12px;width:60px;outline:none;" oninput="calcSunat()"></td><td style="color:var(--jade);font-weight:600;">S/ 44.00</td><td style="cursor:pointer;color:var(--error);">✕</td></tr>
+            <tr><td><input value="Chicha Morada Premium" style="background:transparent;border:none;color:var(--text);font-size:12px;width:150px;outline:none;"></td><td><input type="number" value="1" style="background:transparent;border:none;color:var(--text);font-size:12px;width:40px;outline:none;" oninput="calcSunat()"></td><td><input type="number" value="8" style="background:transparent;border:none;color:var(--text);font-size:12px;width:60px;outline:none;" oninput="calcSunat()"></td><td style="color:var(--jade);font-weight:600;">S/ 8.00</td><td style="cursor:pointer;color:var(--error);">✕</td></tr>
+          </tbody></table></div>
+          <button class="btn-s" style="margin-top:8px;font-size:12px;" onclick="agregarLinea()">+ Agregar línea</button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;">
+          <div class="pos-row"><span>Op. inafectas</span><span>S/ 0.00</span></div>
+          <div class="pos-row"><span>Base imponible</span><span id="su-base">S/ 44.07</span></div>
+          <div class="pos-row"><span>IGV 18%</span><span id="su-igv-monto">S/ 7.93</span></div>
+          <div class="pos-row total"><span>TOTAL</span><span id="su-total">S/ 52.00</span></div>
+        </div>
+        <button class="btn-p" style="width:100%;justify-content:center;margin-top:12px;" onclick="emitirSunat()">📤 Emitir comprobante SUNAT</button>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">📋 Vista previa XML</div></div>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;font-size:10px;color:var(--muted);font-family:monospace;line-height:1.6;overflow-x:auto;" id="su-xml">
+&lt;Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"&gt;<br>
+  &lt;UBLVersionID&gt;2.1&lt;/UBLVersionID&gt;<br>
+  &lt;CustomizationID&gt;2.0&lt;/CustomizationID&gt;<br>
+  &lt;ID&gt;B001-00215&lt;/ID&gt;<br>
+  &lt;IssueDate&gt;2025-06-13&lt;/IssueDate&gt;<br>
+  &lt;InvoiceTypeCode listID="0101"&gt;03&lt;/InvoiceTypeCode&gt;<br>
+  &lt;DocumentCurrencyCode&gt;PEN&lt;/DocumentCurrencyCode&gt;<br>
+  &lt;AccountingSupplierParty&gt;<br>
+    &lt;Party&gt;&lt;PartyName&gt;&lt;Name&gt;TRUMAKI SAC&lt;/Name&gt;&lt;/PartyName&gt;<br>
+    &lt;PartyTaxScheme&gt;&lt;CompanyID&gt;20601234567&lt;/CompanyID&gt;&lt;/PartyTaxScheme&gt;&lt;/Party&gt;<br>
+  &lt;/AccountingSupplierParty&gt;<br>
+  &lt;LegalMonetaryTotal&gt;<br>
+    &lt;PayableAmount&gt;52.00&lt;/PayableAmount&gt;<br>
+  &lt;/LegalMonetaryTotal&gt;<br>
+&lt;/Invoice&gt;
+        </div>
+        <div style="margin-top:12px;padding:10px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:8px;">
+          <div style="font-size:11px;color:var(--success);font-weight:600;">UBL 2.1 · Válido SUNAT/OSE</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;">Hash SHA-256 · Firma digital RSA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="su-registro" style="display:none;">
+    <div class="card" style="padding:0;"><div class="tbl-wrap"><table><thead><tr><th>N° Comprobante</th><th>Tipo</th><th>Cliente / RUC</th><th>Fecha</th><th>Base</th><th>IGV</th><th>Total</th><th>Estado SUNAT</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--jade);font-weight:600;">F001-0089</td><td class="mut">Factura</td><td>Dist. Arrocera Norte<br><span style="font-size:10px;">20601234567</span></td><td class="mut">13/06/25</td><td class="mut">S/ 500.00</td><td class="mut">S/ 90.00</td><td style="font-weight:600;">S/ 590.00</td><td><span class="pill pill-ok">CDR Aceptado</span></td></tr>
+      <tr><td style="color:var(--jade);font-weight:600;">B001-0214</td><td class="mut">Boleta</td><td>Carlos Mendoza<br><span style="font-size:10px;">44123456</span></td><td class="mut">13/06/25</td><td class="mut">S/ 101.69</td><td class="mut">S/ 18.31</td><td style="font-weight:600;">S/ 120.00</td><td><span class="pill pill-ok">CDR Aceptado</span></td></tr>
+      <tr><td style="color:var(--jade);font-weight:600;">B001-0213</td><td class="mut">Boleta</td><td>Consumidor Final</td><td class="mut">13/06/25</td><td class="mut">S/ 57.63</td><td class="mut">S/ 10.37</td><td style="font-weight:600;">S/ 68.00</td><td><span class="pill pill-proc">Enviando OSE…</span></td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div id="su-ple" style="display:none;">
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-title">PLE — Libros electrónicos</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Libro</th><th>Período</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;">Registro de Ventas e Ingresos</td><td class="mut">Mayo 2025</td><td><span class="pill pill-ok">Enviado</span></td><td><button class="btn-s" style="padding:4px 10px;font-size:11px;">Descargar</button></td></tr>
+          <tr><td style="font-weight:500;">Registro de Compras</td><td class="mut">Mayo 2025</td><td><span class="pill pill-ok">Enviado</span></td><td><button class="btn-s" style="padding:4px 10px;font-size:11px;">Descargar</button></td></tr>
+          <tr><td style="font-weight:500;">Registro de Ventas e Ingresos</td><td class="mut">Jun 2025</td><td><span class="pill pill-pend">Pendiente</span></td><td><button class="btn-p" style="padding:4px 10px;font-size:11px;" onclick="showToast('PLE Junio generado correctamente','ok')">Generar</button></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-title">Calendario SUNAT 2026</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">RUC terminado en 7 · MYPE Tributario</div>
+        <div class="tbl-wrap"><table><thead><tr><th>Obligación</th><th>Vencimiento</th><th></th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;">IGV + Renta — Mayo</td><td style="color:var(--jade);">17 Jun 2025</td><td><span class="pill pill-pend">Próximo</span></td></tr>
+          <tr><td style="font-weight:500;">PDT 621 — Mayo</td><td style="color:var(--jade);">17 Jun 2025</td><td><span class="pill pill-pend">Próximo</span></td></tr>
+          <tr><td style="font-weight:500;">PLAME — Mayo</td><td class="mut">23 Jun 2025</td><td><span class="pill pill-pend">Pendiente</span></td></tr>
+          <tr><td style="font-weight:500;">IGV + Renta — Junio</td><td class="mut">17 Jul 2025</td><td><span class="pill pill-ok">Pendiente</span></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════ TRIBUTACION ══ -->
+<div id="scr-tributacion" class="screen">
+  <div class="kpi-grid mb16">
+    <div class="kpi k1"><div class="kpi-lbl">IGV mes</div><div class="kpi-val">S/ 7,272</div><span class="badge-neu">18% ventas</span></div>
+    <div class="kpi k3"><div class="kpi-lbl">Crédito fiscal</div><div class="kpi-val">S/ 2,244</div><span class="badge-up">compras</span></div>
+    <div class="kpi k2"><div class="kpi-lbl">IGV a pagar</div><div class="kpi-val">S/ 5,028</div><span class="badge-down">▼ 17 Jun</span></div>
+    <div class="kpi k4"><div class="kpi-lbl">Imp. Renta (10%)</div><div class="kpi-val">S/ 1,569</div><span class="badge-down">MYPE</span></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="card-h"><div class="card-title">Régimen tributario — MYPE</div></div>
+      <div style="padding:12px;background:var(--jade-dim);border-radius:8px;margin-bottom:12px;">
+        <div style="font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:var(--jade);">MYPE Tributario</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Ingresos netos hasta 1700 UIT (S/ 9,350,000)</div>
+      </div>
+      <div class="balance-row"><span>IR hasta 15 UIT de renta neta</span><span style="color:var(--jade);">10%</span></div>
+      <div class="balance-row"><span>IR por exceso de 15 UIT</span><span style="color:var(--jade);">29.5%</span></div>
+      <div class="balance-row"><span>UIT 2026</span><span style="color:var(--jade);">S/ 5,500</span></div>
+      <div class="balance-row"><span>15 UIT (tope tasa reducida)</span><span style="color:var(--jade);">S/ 82,500</span></div>
+      <div class="balance-row"><span>Pago a cuenta mensual</span><span style="color:var(--jade);">1.0% ingresos</span></div>
+    </div>
+    <div class="card"><div class="card-h"><div class="card-title">PDT 621 — Estimado junio</div></div>
+      <div class="balance-row"><span>Ingresos netos del mes</span><span>S/ 48,230</span></div>
+      <div class="balance-row"><span>IGV débito fiscal</span><span>S/ 7,272</span></div>
+      <div class="balance-row"><span>IGV crédito fiscal (compras)</span><span style="color:var(--success);">(S/ 2,244)</span></div>
+      <div class="balance-row bold"><span>IGV a pagar</span><span>S/ 5,028</span></div>
+      <div class="balance-row"><span>Pago a cuenta IR (1.0%)</span><span>S/ 482</span></div>
+      <div class="balance-row total-row"><span>TOTAL TRIBUTOS A PAGAR</span><span>S/ 5,510</span></div>
+      <button class="btn-p" style="width:100%;justify-content:center;margin-top:12px;" onclick="showToast('PDT 621 generado y listo para declarar','ok')">📤 Generar PDT 621</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ REPORTES ══ -->
+<div id="scr-reportes" class="screen">
+  <div class="grid3 mb16">
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Balance General PDF…','ok')"><div style="font-size:28px;margin-bottom:8px;">📊</div><div class="card-title">Balance General</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">PDF + Excel</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Estado de Resultados…','ok')"><div style="font-size:28px;margin-bottom:8px;">📈</div><div class="card-title">Estado de Resultados</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">PDF + Excel</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Flujo de Caja…','ok')"><div style="font-size:28px;margin-bottom:8px;">💵</div><div class="card-title">Flujo de Caja</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">PDF + Excel</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Kardex…','ok')"><div style="font-size:28px;margin-bottom:8px;">📦</div><div class="card-title">Kardex inventario</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Excel</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Registro de Ventas…','ok')"><div style="font-size:28px;margin-bottom:8px;">🧾</div><div class="card-title">Registro de ventas</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">PDF + Excel</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Reporte de Tributos…','ok')"><div style="font-size:28px;margin-bottom:8px;">📋</div><div class="card-title">Tributos SUNAT</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">PDF</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Reporte de Compras…','ok')"><div style="font-size:28px;margin-bottom:8px;">🛍️</div><div class="card-title">Registro de compras</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Excel</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Depreciaciones…','ok')"><div style="font-size:28px;margin-bottom:8px;">📉</div><div class="card-title">Depreciaciones</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Excel + PCGE</div></div>
+    <div class="card" style="cursor:pointer;" onclick="showToast('Generando Reporte de Clientes…','ok')"><div style="font-size:28px;margin-bottom:8px;">👥</div><div class="card-title">Reporte CRM</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Excel</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ ROLES ══ -->
+<div id="scr-roles" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="card-title">Roles y permisos del sistema</div><button class="btn-p">+ Nuevo rol</button>
+  </div>
+  <div class="grid3">
+    <div class="role-card"><div class="role-name" style="color:var(--jade);">🔑 Administrador</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Acceso total al sistema</div><span class="perm-tag">Dashboard</span><span class="perm-tag">POS</span><span class="perm-tag">CRM</span><span class="perm-tag">Finanzas</span><span class="perm-tag">SUNAT</span><span class="perm-tag">Roles</span><span class="perm-tag">Auditoría</span></div>
+    <div class="role-card"><div class="role-name" style="color:var(--info);">📊 Gerente</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Gestión operativa y reportes</div><span class="perm-tag">Dashboard</span><span class="perm-tag">POS</span><span class="perm-tag">CRM</span><span class="perm-tag">Reportes</span><span class="perm-tag off">Roles</span><span class="perm-tag off">PCGE</span></div>
+    <div class="role-card"><div class="role-name" style="color:var(--warning);">💳 Cajero</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Solo POS y cobros</div><span class="perm-tag">POS</span><span class="perm-tag">Pedidos</span><span class="perm-tag">SUNAT básico</span><span class="perm-tag off">Finanzas</span><span class="perm-tag off">Roles</span></div>
+    <div class="role-card"><div class="role-name" style="color:var(--error);">👨‍🍳 Cocina</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Monitor de cocina únicamente</div><span class="perm-tag">Cocina</span><span class="perm-tag">Carta</span><span class="perm-tag off">POS</span><span class="perm-tag off">CRM</span><span class="perm-tag off">Finanzas</span></div>
+    <div class="role-card"><div class="role-name" style="color:var(--success);">🧮 Contador</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Módulos financieros y SUNAT</div><span class="perm-tag">Finanzas</span><span class="perm-tag">SUNAT</span><span class="perm-tag">Activos</span><span class="perm-tag">Reportes</span><span class="perm-tag off">POS</span></div>
+    <div class="role-card"><div class="role-name" style="color:var(--muted);">👁️ Visualizador</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Solo lectura · Sin edición</div><span class="perm-tag">Dashboard</span><span class="perm-tag">Reportes</span><span class="perm-tag off">Editar</span><span class="perm-tag off">Eliminar</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ AUDITORIA ══ -->
+<div id="scr-auditoria" class="screen">
+  <div class="card" style="padding:0;"><div class="tbl-wrap">
+    <table><thead><tr><th>Timestamp</th><th>Usuario</th><th>Módulo</th><th>Acción</th><th>Detalle</th><th>IP</th></tr></thead>
+    <tbody>
+      <tr><td class="mut">13/06 20:14:32</td><td style="color:var(--jade);">admin</td><td>SUNAT</td><td><span class="pill pill-ok">EMITIR</span></td><td>Boleta B001-00214 · S/ 120.00</td><td class="mut">192.168.1.5</td></tr>
+      <tr><td class="mut">13/06 20:11:08</td><td style="color:var(--jade);">cajero1</td><td>POS</td><td><span class="pill pill-proc">VENTA</span></td><td>Pedido #P-096 · S/ 68.00 · Yape</td><td class="mut">192.168.1.8</td></tr>
+      <tr><td class="mut">13/06 19:58:41</td><td style="color:var(--jade);">admin</td><td>Inventario</td><td><span class="pill pill-pend">EDITAR</span></td><td>Queso crema: stock 12→8 kg</td><td class="mut">192.168.1.5</td></tr>
+      <tr><td class="mut">13/06 19:45:23</td><td style="color:var(--jade);">gerente1</td><td>Clientes</td><td><span class="pill pill-info">CREAR</span></td><td>Nuevo cliente: María López · DNI 48123456</td><td class="mut">192.168.1.12</td></tr>
+      <tr><td class="mut">13/06 19:30:15</td><td style="color:var(--jade);">cajero1</td><td>POS</td><td><span class="pill pill-err">CANCELAR</span></td><td>Pedido #P-082 cancelado · motivo: cliente</td><td class="mut">192.168.1.8</td></tr>
+      <tr><td class="mut">13/06 18:00:00</td><td style="color:var(--jade);">admin</td><td>Sistema</td><td><span class="pill pill-proc">LOGIN</span></td><td>Inicio de sesión · Turno noche</td><td class="mut">192.168.1.5</td></tr>
+    </tbody></table>
+  </div></div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ═══════════ MODALS ═══════════ -->
+<div id="modal-pedido" class="modal-bg" onclick="if(this===event.target)closeModal('modal-pedido')">
+  <div class="modal">
+    <h3>🧾 Nuevo pedido</h3>
+    <div class="field"><label>Mesa / Canal</label><select><option>Mesa 1</option><option>Mesa 2</option><option>Mesa 3</option><option>Delivery</option><option>Para llevar</option></select></div>
+    <div class="field"><label>Cliente</label><input placeholder="Nombre del cliente"></div>
+    <div class="field"><label>Observaciones</label><textarea rows="2" placeholder="Sin picante, alergias, etc."></textarea></div>
+    <div class="modal-foot"><button class="btn-s" onclick="closeModal('modal-pedido')">Cancelar</button><button class="btn-p" onclick="closeModal('modal-pedido');showToast('Pedido creado correctamente','ok')">Crear pedido</button></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ═══════ DATA ═══════ */
+const ROLES_MAP = {
+  admin:{label:'Administrador',init:'AD'},
+  gerente:{label:'Gerente',init:'GR'},
+  cajero:{label:'Cajero',init:'CA'},
+  cocina:{label:'Cocina',init:'CO'},
+  contador:{label:'Contador',init:'CT'},
+  delivery:{label:'Delivery',init:'DV'},
+};
+
+const PRODUCTOS = [
+  {id:1,cat:'Makis',e:'🌊',n:'Dragon Roll',d:'Langostino tempura, palta, unagi',p:22,c:8,stock:40},
+  {id:2,cat:'Makis',e:'🔥',n:'Spicy Tuna',d:'Atún spicy, pepino, sriracha',p:19,c:7,stock:35},
+  {id:3,cat:'Makis',e:'🦐',n:'Ebi Tempura',d:'Camarón tempura, queso crema',p:19,c:7,stock:30},
+  {id:4,cat:'Makis',e:'🥑',n:'Avo Crunch',d:'Palta, pepino, panko',p:17,c:6,stock:28},
+  {id:5,cat:'Makis',e:'🐟',n:'Salmón Lovers',d:'Salmón, cream cheese, philadelphia',p:18,c:7,stock:25},
+  {id:6,cat:'Makis',e:'🌈',n:'Rainbow Roll',d:'Atún, salmón, langostino, palta',p:24,c:9,stock:20},
+  {id:7,cat:'Makis',e:'🍋',n:'Acevichado Clásico',d:'Pulpo, ají amarillo, ceviche',p:18,c:6,stock:32},
+  {id:8,cat:'Makis',e:'🥬',n:'Maki Veggie',d:'Pepino, zanahoria, palta, cream cheese',p:15,c:4,stock:22},
+  {id:9,cat:'Makis',e:'🥩',n:'Anticuchero',d:'Corazón a la parilla, salsa anticucho',p:20,c:7,stock:18},
+  {id:10,cat:'Bebidas',e:'🍹',n:'Chicha Morada Premium',d:'Artesanal, morada real',p:8,c:2,stock:40},
+  {id:11,cat:'Bebidas',e:'🍋',n:'Limonada Clásica',d:'Limón fresco, hielo, soda',p:7,c:2,stock:50},
+  {id:12,cat:'Bebidas',e:'🍵',n:'Matcha Latte',d:'Matcha premium, leche de avena',p:12,c:4,stock:20},
+  {id:13,cat:'Bebidas',e:'🧃',n:'Jugo Natural',d:'Temporada: maracuyá / guanábana',p:9,c:3,stock:30},
+  {id:14,cat:'Postres',e:'🍰',n:'Cheesecake Maracuyá',d:'Base galleta, crema, coulis',p:14,c:5,stock:12},
+  {id:15,cat:'Postres',e:'🍡',n:'Mochi de Sabores x3',d:'Fresa, vainilla, matcha',p:16,c:5,stock:15},
+  {id:16,cat:'Postres',e:'🫚',n:'Dorayaki',d:'Crepe japonés, anko, nata',p:12,c:4,stock:10},
+];
+
+const CLIENTES_DATA = [
+  {n:'Carlos Mendoza',dni:'44123456',tel:'+51 944 123 456',vis:24,ult:'Hoy 20:11',total:1248,prom:52,pts:1248,niv:'gold'},
+  {n:'Ana Ríos',dni:'47891234',tel:'+51 987 654 321',vis:18,ult:'Hoy 19:30',total:890,prom:49.4,pts:890,niv:'gold'},
+  {n:'Jorge Torres',dni:'45671234',tel:'+51 912 345 678',vis:11,ult:'Hace 2 días',total:520,prom:47.3,pts:520,niv:'silver'},
+  {n:'Lucía Vargas',dni:'48123456',tel:'+51 955 789 012',vis:7,ult:'Hace 4 días',total:312,prom:44.6,pts:312,niv:'silver'},
+  {n:'Rodrigo Vega',dni:'46234567',tel:'+51 923 456 789',vis:4,ult:'Hace 1 sem',total:180,prom:45.0,pts:180,niv:'regular'},
+  {n:'Gabriela Soto',dni:'43987654',tel:'+51 988 111 222',vis:2,ult:'Hace 2 sem',total:94,prom:47.0,pts:94,niv:'regular'},
+];
+
+const PEDIDOS_DATA = [
+  {id:'#P-096',canal:'Mesa 3',cliente:'Carlos M.',items:3,total:68,pago:'Yape',estado:'entregado',hora:'20:11'},
+  {id:'#P-095',canal:'Delivery',cliente:'Ana R.',items:5,total:120,pago:'Tarjeta',estado:'proceso',hora:'20:08'},
+  {id:'#P-094',canal:'Mesa 7',cliente:'Mesa 7',items:2,total:44,pago:'Efectivo',estado:'proceso',hora:'20:05'},
+  {id:'#P-093',canal:'Para llevar',cliente:'Jorge T.',items:4,total:88,pago:'Yape',estado:'pendiente',hora:'19:58'},
+  {id:'#P-092',canal:'Mesa 1',cliente:'Mesa 1',items:6,total:156,pago:'Efectivo',estado:'entregado',hora:'19:40'},
+  {id:'#P-091',canal:'Delivery · Rappi',cliente:'Lucía V.',items:3,total:54,pago:'Rappi',estado:'entregado',hora:'19:20'},
+];
+
+const INVENTARIO_DATA = [
+  {n:'Arroz para sushi',cat:'Base',stock:45,min:10,u:'kg',pu:5.50},
+  {n:'Salmón fresco',cat:'Proteína',stock:12,min:8,u:'kg',pu:38.00},
+  {n:'Alga Nori',cat:'Envoltura',stock:80,min:20,u:'paq.',pu:12.00},
+  {n:'Queso crema',cat:'Relleno',stock:8,min:10,u:'kg',pu:22.00},
+  {n:'Langostino',cat:'Proteína',stock:6,min:5,u:'kg',pu:28.00},
+  {n:'Palta / Aguacate',cat:'Vegetal',stock:35,min:15,u:'unid.',pu:2.50},
+  {n:'Vinagre de arroz',cat:'Condimento',stock:4,min:5,u:'L',pu:8.00},
+  {n:'Atún fresco',cat:'Proteína',stock:18,min:8,u:'kg',pu:32.00},
+  {n:'Pepino',cat:'Vegetal',stock:40,min:10,u:'unid.',pu:1.00},
+  {n:'Cream cheese Philly',cat:'Relleno',stock:22,min:8,u:'kg',pu:24.00},
+];
+
+const MESAS_DATA = [
+  {n:1,e:'ocupada',i:'4p · 45min'},{n:2,e:'libre',i:'Cap. 4'},{n:3,e:'ocupada',i:'2p · 22min'},
+  {n:4,e:'ocupada',i:'6p · 68min'},{n:5,e:'libre',i:'Cap. 4'},{n:6,e:'reservada',i:'8pm · 6p'},
+  {n:7,e:'ocupada',i:'3p · 15min'},{n:8,e:'libre',i:'Cap. 2'},{n:9,e:'ocupada',i:'2p · 8min'},
+  {n:10,e:'reservada',i:'9pm · 4p'},{n:11,e:'libre',i:'Cap. 6'},{n:12,e:'ocupada',i:'5p · 35min'},
+];
+
+const COCINA_DATA = [
+  {id:'#P-095',cliente:'Ana R.',canal:'Delivery',items:[{n:'Dragon Roll',q:2},{n:'Spicy Tuna',q:1},{n:'Matcha Latte',q:2}],total:120,est:'preparando',min:12},
+  {id:'#P-094',cliente:'Mesa 7',canal:'Mesa 7',items:[{n:'Ebi Tempura',q:1},{n:'Limonada',q:1}],total:44,est:'preparando',min:7},
+  {id:'#P-093',cliente:'Jorge T.',canal:'Para llevar',items:[{n:'Rainbow Roll',q:1},{n:'Mochi x3',q:1},{n:'Chicha',q:2}],total:88,est:'listo',min:24},
+];
+
+const ACTIVOS_TANG = [
+  {e:'🔥',n:'Cocina industrial 4 hornillas',sub:'333',area:'Cocina',val:12000,dep:10,anos:1},
+  {e:'❄️',n:'Frigorífico vertical 2 puertas',sub:'333',area:'Cocina',val:8500,dep:10,anos:1},
+  {e:'🪑',n:'Mesas + sillas salón (12 mesas)',sub:'336',area:'Salón',val:9600,dep:10,anos:1},
+  {e:'💻',n:'Servidor + POS tablets (x3)',sub:'334',area:'Admin',val:7800,dep:25,anos:1},
+  {e:'📺',n:'Pantallas digitales menú (x2)',sub:'334',area:'Salón',val:4200,dep:20,anos:1},
+  {e:'🔌',n:'Instalación eléctrica',sub:'332',area:'Local',val:5800,dep:3,anos:1},
+  {e:'🏗️',n:'Remodelación interior',sub:'331',area:'Local',val:18000,dep:3,anos:1},
+  {e:'🌬️',n:'Aire acondicionado',sub:'335',area:'Salón',val:4500,dep:20,anos:1},
+];
+
+/* ═══════ STATE ═══════ */
+let posCart = [];
+let posMetodoPago = 'efectivo';
+let activeCat = 'Todos';
+let currentCocinaTab = 'preparando';
+let currentCartaTab = 'makis';
+let chartsInit = {};
+
+/* ═══════ LOGIN ═══════ */
+function doLogin(){
+  const rol = document.getElementById('li-rol').value;
+  const pass = document.getElementById('li-pass').value;
+  const alert = document.getElementById('login-alert');
+  if(pass === '1234'){
+    alert.style.display = 'none';
+    document.getElementById('scr-login').style.display = 'none';
+    const r = ROLES_MAP[rol] || ROLES_MAP.admin;
+    document.getElementById('sb-avatar').textContent = r.init;
+    document.getElementById('sb-uname').textContent = r.label + ' TRUMAKI';
+    document.getElementById('sb-urole').textContent = r.label;
+    initApp();
+  } else {
+    alert.style.display = 'block';
+  }
+}
+document.getElementById('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+function doLogout(){
+  document.getElementById('scr-login').style.display='flex';
+  document.getElementById('li-pass').value='';
+}
+
+/* ═══════ NAVIGATION ═══════ */
+const PAGE_META = {
+  dashboard:{title:'Dashboard General',sub:'Viernes 13 Jun 2025 · Turno Noche',action:'+ Nuevo pedido'},
+  pos:{title:'POS — Punto de venta',sub:'Turno activo · Caja 01',action:'+ Pedido manual'},
+  pedidos:{title:'Pedidos activos',sub:'96 pedidos hoy',action:'+ Nuevo pedido'},
+  mesas:{title:'Gestión de mesas',sub:'12 mesas · 7 ocupadas',action:'+ Reserva'},
+  cocina:{title:'Monitor de cocina',sub:'4 pedidos en proceso',action:'+ Pedido urgente'},
+  carta:{title:'Carta digital',sub:'34 productos activos',action:'+ Nuevo plato'},
+  ecommerce:{title:'E-commerce',sub:'Tienda online activa',action:'Ver tienda'},
+  delivery:{title:'Delivery en tiempo real',sub:'2 entregas activas',action:'+ Nueva orden'},
+  crm:{title:'CRM — Clientes',sub:'6 clientes registrados hoy',action:'+ Nuevo cliente'},
+  fidelizacion:{title:'Programa de fidelización',sub:'1 Sol = 1 Punto',action:'+ Canjear puntos'},
+  inventario:{title:'Control de inventario',sub:'2 insumos en estado crítico',action:'+ Agregar insumo'},
+  compras:{title:'Registro de compras',sub:'8 proveedores activos',action:'+ Nueva compra'},
+  activos:{title:'Activos fijos — PCGE 33/34',sub:'Depreciación automática SUNAT',action:'+ Agregar activo'},
+  financiamiento:{title:'Financiamiento',sub:'Capital propio 60% · Préstamo 40%',action:'Simular crédito'},
+  estados:{title:'Estados Financieros',sub:'Balance cuadrado ✅',action:'Exportar PDF'},
+  sunat:{title:'Facturación SUNAT',sub:'UBL 2.1 · CDR · PDF',action:'+ Emitir comprobante'},
+  tributacion:{title:'Tributación 2026',sub:'MYPE Tributario · UIT S/5,500',action:'Generar PDT 621'},
+  reportes:{title:'Reportes y exportaciones',sub:'PDF + Excel disponibles',action:'Exportar todo'},
+  roles:{title:'Roles y accesos',sub:'RBAC · JWT · 2FA',action:'+ Nuevo rol'},
+  auditoria:{title:'Auditoría del sistema',sub:'Bitácora de cambios',action:'Exportar log'},
+};
+
+function go(name, el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('scr-'+name).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const meta = PAGE_META[name] || {title:name,sub:'',action:'Acción'};
+  document.getElementById('tb-title').textContent = meta.title;
+  document.getElementById('tb-sub').textContent = meta.sub;
+  document.getElementById('tb-action').textContent = meta.action;
+  if(name==='dashboard') initDashCharts();
+  if(name==='pos') initPos();
+  if(name==='mesas') renderMesas();
+  if(name==='cocina') renderCocina();
+  if(name==='carta') renderCarta();
+  if(name==='crm') renderCRM();
+  if(name==='fidelizacion') renderFidelizacion();
+  if(name==='inventario') renderInventario();
+  if(name==='activos') renderActivos();
+  if(name==='pedidos') renderPedidos();
+}
+
+function handleAction(){
+  const title = document.getElementById('tb-title').textContent;
+  if(title.includes('Dashboard')||title.includes('Pedido')) openModal('modal-pedido');
+  else showToast('Función disponible próximamente','warn');
+}
+
+/* ═══════ TABS ═══════ */
+function tabSwitch(el, targetId){
+  const bar = el.closest('.tabs-bar') || el.parentElement;
+  bar.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const screen = el.closest('.screen');
+  if(!screen) return;
+  const allTabs = screen.querySelectorAll('[id]');
+  allTabs.forEach(t=>{
+    if(t.id && t.id!==targetId && t.id.includes('-')) t.style.display='none';
+  });
+  const target = document.getElementById(targetId);
+  if(target) target.style.display='';
+  if(targetId==='ef-flujo') initFlujoChart();
+  if(targetId==='ef-resultados') initResultadosChart();
+  if(targetId==='act-dep') initDepChart();
+}
+
+/* ═══════ CHARTS ═══════ */
+function mkChart(id, type, data, opts={}){
+  const canvas = document.getElementById(id);
+  if(!canvas) return;
+  if(chartsInit[id]){try{chartsInit[id].destroy();}catch(e){}}
+  chartsInit[id] = new Chart(canvas, {type, data, options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false},...(opts.plugins||{})},
+    scales: type==='doughnut'||type==='pie' ? {} : {
+      x:{grid:{color:'rgba(255,255,255,.03)'},ticks:{color:'#9CA3AF',font:{size:10}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#9CA3AF',font:{size:10},...(opts.yTick||{})}}
+    }, ...opts
+  }});
+}
+
+function initDashCharts(){
+  if(chartsInit['ch-horas']) return;
+  mkChart('ch-horas','line',{
+    labels:['5pm','6pm','7pm','8pm','9pm','10pm','11pm','12am'],
+    datasets:[{label:'Ventas',data:[280,520,740,960,820,640,480,160],borderColor:'#00C896',backgroundColor:'rgba(0,200,150,.08)',fill:true,tension:.4,pointBackgroundColor:'#00C896',pointRadius:3}]
+  },{yTick:{callback:v=>'S/'+v}});
+  mkChart('ch-canales','doughnut',{
+    labels:['Local','Delivery','Rappi'],
+    datasets:[{data:[46,34,20],backgroundColor:['#00C896','#009970','#22C55E'],borderWidth:0,hoverOffset:5}]
+  },{plugins:{legend:{display:false}},cutout:'65%'});
+  mkChart('ch-semana','bar',{
+    labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+    datasets:[{data:[3200,2900,3600,3840,4100,5200,4600],backgroundColor:'#00C896',borderRadius:4}]
+  },{yTick:{callback:v=>'S/'+v.toLocaleString()}});
+  renderTopProds();
+  renderActividad();
+}
+
+function initFlujoChart(){
+  if(chartsInit['ch-flujo']) return;
+  mkChart('ch-flujo','line',{
+    labels:['Jun','Jul','Ago','Sep','Oct','Nov'],
+    datasets:[
+      {label:'Ingresos',data:[48230,51000,54200,58000,62000,65000],borderColor:'#00C896',backgroundColor:'rgba(0,200,150,.1)',fill:true,tension:.4},
+      {label:'Egresos',data:[35770,37000,39000,42000,44000,46000],borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,.06)',fill:true,tension:.4},
+    ]
+  },{plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}}},yTick:{callback:v=>'S/'+v.toLocaleString()}});
+}
+
+function initResultadosChart(){
+  if(chartsInit['ch-resultados']) return;
+  mkChart('ch-resultados','bar',{
+    labels:['Ventas','Costo ventas','Gastos op.','Utilidad'],
+    datasets:[{data:[48230,19292,12773,12861],backgroundColor:['#00C896','#EF4444','#EAB308','#22C55E'],borderRadius:4}]
+  },{yTick:{callback:v=>'S/'+v.toLocaleString()}});
+}
+
+function initDepChart(){
+  if(chartsInit['ch-dep']) return;
+  mkChart('ch-dep','bar',{
+    labels:ACTIVOS_TANG.map(a=>a.n.substring(0,20)+'…'),
+    datasets:[{label:'Dep. anual',data:ACTIVOS_TANG.map(a=>+(a.val*a.dep/100).toFixed(0)),backgroundColor:'#00C896',borderRadius:4}]
+  },{yTick:{callback:v=>'S/'+v.toLocaleString()}});
+}
+
+function initFinChart(){
+  if(chartsInit['ch-fin']) return;
+  mkChart('ch-fin','doughnut',{
+    labels:['Capital propio','Préstamo'],
+    datasets:[{data:[48000,32000],backgroundColor:['#00C896','#EAB308'],borderWidth:0}]
+  },{cutout:'60%'});
+}
+
+/* ═══════ DASHBOARD HELPERS ═══════ */
+function renderTopProds(){
+  const top=[{e:'🌊',n:'Dragon Roll',u:34,v:'S/ 748'},{e:'🔥',n:'Spicy Tuna',u:28,v:'S/ 532'},{e:'🦐',n:'Ebi Tempura',u:22,v:'S/ 418'},{e:'🥑',n:'Avo Crunch',u:19,v:'S/ 323'},{e:'🐟',n:'Salmón Lovers',u:16,v:'S/ 288'}];
+  document.getElementById('top-prods').innerHTML = top.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);">
+      <span style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:var(--jade);width:16px;">#${i+1}</span>
+      <span style="font-size:18px;">${p.e}</span>
+      <span style="flex:1;font-size:12px;font-weight:500;">${p.n}</span>
+      <span style="font-size:11px;color:var(--muted);">${p.u}u</span>
+      <span style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:var(--jade);">${p.v}</span>
+    </div>`).join('');
+}
+function renderActividad(){
+  const acts=[
+    {c:'jade',t:'Pedido #P-096 completado · Mesa 3',h:'Hace 3 min'},
+    {c:'success',t:'Pago S/ 68.00 · Yape · Carlos M.',h:'Hace 7 min'},
+    {c:'info',t:'Nuevo delivery asignado · Rappi #D-041',h:'Hace 12 min'},
+    {c:'warning',t:'⚠ Stock bajo: Queso crema < mínimo',h:'Hace 18 min'},
+    {c:'success',t:'Boleta B001-00214 emitida SUNAT',h:'Hace 24 min'},
+    {c:'jade',t:'Reserva confirmada Mesa 6 · 8pm · 6p',h:'Hace 40 min'},
+  ];
+  document.getElementById('actividad-feed').innerHTML = acts.map(a=>`
+    <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--${a.c});flex-shrink:0;margin-top:5px;"></div>
+      <div><div style="font-size:11.5px;">${a.t}</div><div style="font-size:10px;color:var(--muted);margin-top:1px;">${a.h}</div></div>
+    </div>`).join('');
+}
+
+/* ═══════ POS ═══════ */
+function initPos(){
+  const cats = ['Todos',...new Set(PRODUCTOS.map(p=>p.cat))];
+  document.getElementById('pos-cats').innerHTML = cats.map(c=>`<div class="cpill${c===activeCat?' active':''}" onclick="setPoscat('${c}',this)">${c}</div>`).join('');
+  renderPosGrid();
+  renderPosCart();
+}
+function setPoscat(c,el){
+  activeCat=c;
+  document.querySelectorAll('.cpill').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  renderPosGrid();
+}
+function posFilter(q){
+  renderPosGrid(q);
+}
+function renderPosGrid(q=''){
+  const prods = PRODUCTOS.filter(p=>{
+    if(activeCat!=='Todos'&&p.cat!==activeCat)return false;
+    if(q&&!p.n.toLowerCase().includes(q.toLowerCase()))return false;
+    return true;
+  });
+  document.getElementById('pos-grid').innerHTML = prods.map(p=>`
+    <div class="prod-card" onclick="posAdd(${p.id})">
+      <div class="prod-emo">${p.e}</div>
+      <div class="prod-name">${p.n}</div>
+      <div class="prod-desc">${p.d}</div>
+      <div class="prod-price">S/ ${p.p}</div>
+    </div>`).join('');
+}
+function posAdd(id){
+  const p = PRODUCTOS.find(x=>x.id===id);
+  if(!p) return;
+  const ex = posCart.find(x=>x.id===id);
+  if(ex) ex.q++;
+  else posCart.push({...p,q:1});
+  renderPosCart();
+  showToast('✅ '+p.n+' agregado','ok');
+}
+function posChangeQty(id,d){
+  const ex = posCart.find(x=>x.id===id);
+  if(!ex)return;
+  ex.q+=d;
+  if(ex.q<=0) posCart=posCart.filter(x=>x.id!==id);
+  renderPosCart();
+}
+function renderPosCart(){
+  const el = document.getElementById('pos-items');
+  if(!posCart.length){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);font-size:12px;">Agrega productos ←</div>';
+    calcPosTotals(0); return;
+  }
+  el.innerHTML = posCart.map(i=>`
+    <div class="pos-item">
+      <span style="font-size:16px;">${i.e}</span>
+      <div style="flex:1;">
+        <div class="pos-iname">${i.n}</div>
+        <div class="pos-iprice">S/ ${i.p} c/u</div>
+      </div>
+      <div class="pos-qty">
+        <div class="qb" onclick="posChangeQty(${i.id},-1)">−</div>
+        <span style="min-width:18px;text-align:center;font-weight:700;font-size:13px;">${i.q}</span>
+        <div class="qb" onclick="posChangeQty(${i.id},+1)">+</div>
+      </div>
+      <div style="font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:var(--jade);min-width:52px;text-align:right;">S/ ${(i.p*i.q).toFixed(2)}</div>
+    </div>`).join('');
+  calcPosTotals(posCart.reduce((s,i)=>s+(i.p*i.q),0));
+}
+function calcPosTotals(sub){
+  const igv = sub*0.18/1.18;
+  document.getElementById('pos-sub').textContent='S/ '+(sub-igv).toFixed(2);
+  document.getElementById('pos-igv').textContent='S/ '+igv.toFixed(2);
+  document.getElementById('pos-total').textContent='S/ '+sub.toFixed(2);
+}
+function selPago(m,el){
+  posMetodoPago=m;
+  document.querySelectorAll('.pago-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function clearPos(){posCart=[];renderPosCart();}
+function cobrarPos(){
+  if(!posCart.length){showToast('Agrega productos primero','warn');return;}
+  const total=posCart.reduce((s,i)=>s+(i.p*i.q),0);
+  showToast(`✅ Cobrado S/ ${total.toFixed(2)} · ${posMetodoPago.toUpperCase()}`,'ok');
+  posCart=[];renderPosCart();
+}
+
+/* ═══════ MESAS ═══════ */
+function renderMesas(){
+  document.getElementById('mesa-grid').innerHTML = MESAS_DATA.map(m=>`
+    <div class="mesa ${m.e}" onclick="showToast('Mesa ${m.n}: ${m.e}','ok')">
+      <div class="mesa-n">${m.n.toString().padStart(2,'0')}</div>
+      <div class="mesa-s">${m.e}</div>
+      <div class="mesa-i">${m.i}</div>
+    </div>`).join('');
+}
+
+/* ═══════ COCINA ═══════ */
+function cocinaTabs(tab,el){
+  currentCocinaTab=tab;
+  document.querySelectorAll('.cocina-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderCocina();
+}
+function renderCocina(){
+  const ests = {preparando:['preparando'],listo:['listo'],entregado:['entregado']};
+  const data = COCINA_DATA.filter(p=>ests[currentCocinaTab].includes(p.est));
+  if(!data.length){
+    document.getElementById('cocina-grid').innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);grid-column:1/-1;">Sin pedidos en este estado</div>';
+    return;
+  }
+  const timerClass = m => m<=10?'fast':m<=20?'mid':'slow';
+  document.getElementById('cocina-grid').innerHTML = data.map(p=>`
+    <div class="pedido-c">
+      <div class="pc-head">
+        <div><div class="pc-num">${p.id}</div><div class="pc-time">${p.cliente} · ${p.canal}</div></div>
+        <span class="pill ${p.est==='preparando'?'pill-pend':p.est==='listo'?'pill-proc':'pill-ok'}">${p.est==='preparando'?'Preparando':p.est==='listo'?'Listo ✅':'Entregado'}</span>
+      </div>
+      <div class="pc-body">${p.items.map(i=>`<div class="pc-line"><span>${i.q}× ${i.n}</span></div>`).join('')}</div>
+      <div class="pc-foot">
+        <span class="timer ${timerClass(p.min)}">⏱ ${p.min} min</span>
+        <span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--jade);">S/ ${p.total}</span>
+        ${p.est==='preparando'?`<button class="btn-p" style="padding:5px 12px;font-size:11px;" onclick="showToast('Pedido ${p.id} marcado como listo','ok')">✅ Listo</button>`
+        :p.est==='listo'?`<button class="btn-p" style="padding:5px 12px;font-size:11px;" onclick="showToast('Pedido ${p.id} entregado','ok')">🚀 Entregar</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════ CARTA ═══════ */
+function cartaTabs(tab,el){
+  currentCartaTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>{if(t.parentElement.id===undefined)t.classList.remove('active');});
+  el.classList.add('active');
+  renderCarta();
+}
+function renderCarta(){
+  const prods = PRODUCTOS.filter(p=>p.cat.toLowerCase()===currentCartaTab||
+    (currentCartaTab==='makis'&&p.cat==='Makis')||
+    (currentCartaTab==='bebidas'&&p.cat==='Bebidas')||
+    (currentCartaTab==='postres'&&p.cat==='Postres'));
+  const margin = p => Math.round((p.p-p.c)/p.p*100);
+  document.getElementById('carta-grid').innerHTML = prods.map(p=>`
+    <div class="menu-card">
+      <div class="mc-img">${p.e}</div>
+      <div class="mc-body">
+        <div class="mc-name">${p.n}</div>
+        <div class="mc-desc">${p.d}</div>
+        <div class="mc-foot">
+          <div><div class="mc-price">S/ ${p.p}</div><div class="mc-margin">Costo S/${p.c} · Margen ${margin(p)}%</div></div>
+          <button class="btn-s" style="padding:4px 10px;font-size:11px;" onclick="showToast('Editando ${p.n}','ok')">Editar</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════ CRM ═══════ */
+function renderCRM(){
+  const ini = n => n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  const niv = n => n==='gold'?'nivel-gold':n==='silver'?'nivel-silver':'nivel-regular';
+  const nivLbl = n => n==='gold'?'🥇 Gold':n==='silver'?'🥈 Silver':'🍣 Regular';
+  document.getElementById('tbody-crm').innerHTML = CLIENTES_DATA.map(c=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px;"><div class="av" style="width:30px;height:30px;font-size:10px;">${ini(c.n)}</div>${c.n}</div></td>
+      <td class="mut">${c.dni}</td>
+      <td class="mut">${c.tel}</td>
+      <td style="color:var(--jade);font-weight:700;">${c.vis}</td>
+      <td class="mut">${c.ult}</td>
+      <td style="font-weight:600;">S/ ${c.total}</td>
+      <td class="mut">S/ ${c.prom.toFixed(2)}</td>
+      <td style="color:var(--jade);font-weight:700;">★ ${c.pts}</td>
+      <td><span class="nivel ${niv(c.niv)}">${nivLbl(c.niv)}</span></td>
+      <td><button class="btn-s" style="padding:3px 9px;font-size:11px;" onclick="showToast('Ver perfil de ${c.n}','ok')">Ver</button></td>
+    </tr>`).join('');
+}
+
+/* ═══════ FIDELIZACIÓN ═══════ */
+function renderFidelizacion(){
+  const ini = n => n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  const sorted = [...CLIENTES_DATA].sort((a,b)=>b.pts-a.pts);
+  document.getElementById('fidel-ranking').innerHTML = sorted.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <span style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--jade);width:20px;">${i+1}</span>
+      <div class="av" style="width:34px;height:34px;font-size:11px;">${ini(c.n)}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:500;">${c.n}</div><div style="font-size:10px;color:var(--muted);">${c.vis} visitas · S/${c.total} total</div></div>
+      <div style="text-align:right;"><div style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--jade);">★ ${c.pts} pts</div><div class="pts-bar-wrap"><div class="pts-bar"><div class="pts-fill" style="width:${Math.min(100,c.pts/15)}%;"></div></div></div></div>
+    </div>`).join('');
+}
+
+/* ═══════ INVENTARIO ═══════ */
+function renderInventario(){
+  document.getElementById('tbody-inv').innerHTML = INVENTARIO_DATA.map(i=>{
+    const pct = Math.min(100, Math.round(i.stock/Math.max(i.min,1)*50));
+    const cls = i.stock<i.min?'pill-err':i.stock<i.min*1.5?'pill-pend':'pill-ok';
+    const lbl = i.stock<i.min?'Crítico':i.stock<i.min*1.5?'Bajo':'OK';
+    const barColor = i.stock<i.min?'var(--error)':i.stock<i.min*1.5?'var(--warning)':'var(--success)';
+    return `<tr>
+      <td style="font-weight:500;">${i.n}</td>
+      <td class="mut">${i.cat}</td>
+      <td style="font-weight:600;">${i.stock}</td>
+      <td class="mut">${i.min}</td>
+      <td class="mut">${i.u}</td>
+      <td class="mut">S/ ${i.pu.toFixed(2)}</td>
+      <td style="font-weight:600;color:var(--jade);">S/ ${(i.stock*i.pu).toFixed(2)}</td>
+      <td><span class="pill ${cls}">${lbl}</span></td>
+      <td style="min-width:90px;"><div class="sbar"><div class="sfill" style="width:${pct}%;background:${barColor};"></div></div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ═══════ ACTIVOS ═══════ */
+function renderActivos(){
+  const dep = a => (a.val*a.dep/100).toFixed(0);
+  const vlib = a => (a.val - a.val*a.dep/100*a.anos).toFixed(0);
+  document.getElementById('activos-list').innerHTML = '<div class="card" style="padding:0;"><div class="tbl-wrap"><table><thead><tr><th>Activo</th><th>Subcuenta</th><th>Área</th><th>Valor original</th><th>Tasa dep.</th><th>Dep. anual</th><th>Valor en libros</th><th>Estado</th></tr></thead><tbody>'+
+    ACTIVOS_TANG.map(a=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:18px;">${a.e}</span>${a.n}</div></td>
+      <td class="mut">${a.sub}</td><td class="mut">${a.area}</td>
+      <td style="font-weight:600;">S/ ${a.val.toLocaleString()}</td>
+      <td style="color:var(--jade);">${a.dep}%</td>
+      <td style="color:var(--warning);">S/ ${dep(a)}</td>
+      <td style="font-weight:600;color:var(--success);">S/ ${parseInt(vlib(a)).toLocaleString()}</td>
+      <td><span class="pill pill-ok">Activo</span></td>
+    </tr>`).join('')+'</tbody></table></div></div>';
+}
+
+/* ═══════ PEDIDOS ═══════ */
+function renderPedidos(){
+  const estMap = {entregado:['pill-ok','Entregado'],proceso:['pill-proc','En proceso'],pendiente:['pill-pend','Pendiente']};
+  document.getElementById('tbody-pedidos').innerHTML = PEDIDOS_DATA.map(p=>{
+    const [cls,lbl] = estMap[p.estado] || ['pill-info',p.estado];
+    return `<tr>
+      <td style="color:var(--jade);font-weight:700;">${p.id}</td>
+      <td>${p.canal}</td><td>${p.cliente}</td>
+      <td class="mut">${p.items} items</td>
+      <td style="font-weight:600;">S/ ${p.total}.00</td>
+      <td class="mut">${p.pago}</td>
+      <td><span class="pill ${cls}">${lbl}</span></td>
+      <td class="mut">${p.hora}</td>
+      <td><button class="btn-s" style="padding:3px 9px;font-size:11px;" onclick="showToast('Ver ${p.id}','ok')">Ver</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ═══════ SUNAT ═══════ */
+function selComp(tipo,el){
+  document.querySelectorAll('.comp-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const series = {boleta:'B001',factura:'F001','nota-credito':'NC01','nota-debito':'ND01'};
+  document.getElementById('su-serie').value = series[tipo];
+}
+function calcSunat(){
+  // simplified: assume 2 rows with values
+  setTimeout(()=>{
+    let total = 52;
+    document.getElementById('su-base').textContent = 'S/ '+( total/1.18).toFixed(2);
+    document.getElementById('su-igv-monto').textContent = 'S/ '+(total-total/1.18).toFixed(2);
+    document.getElementById('su-total').textContent = 'S/ '+total.toFixed(2);
+  },0);
+}
+function agregarLinea(){
+  const tbody = document.getElementById('su-items');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input value="Nuevo producto" style="background:transparent;border:none;color:var(--text);font-size:12px;width:150px;outline:none;"></td><td><input type="number" value="1" style="background:transparent;border:none;color:var(--text);font-size:12px;width:40px;outline:none;" oninput="calcSunat()"></td><td><input type="number" value="0" style="background:transparent;border:none;color:var(--text);font-size:12px;width:60px;outline:none;" oninput="calcSunat()"></td><td style="color:var(--jade);font-weight:600;">S/ 0.00</td><td style="cursor:pointer;color:var(--error);" onclick="this.closest('tr').remove()">✕</td>`;
+  tbody.appendChild(tr);
+}
+function emitirSunat(){
+  const serie = document.getElementById('su-serie').value;
+  const corr = document.getElementById('su-correlativo').value;
+  showToast(`✅ ${serie}-${corr} emitida · CDR recibido · PDF generado`,'ok');
+  document.getElementById('su-correlativo').value = String(parseInt(corr)+1).padStart(5,'0');
+}
+
+/* ═══════ FINANCIAMIENTO SIMULADOR ═══════ */
+function simular(){
+  const monto = parseFloat(document.getElementById('sim-monto').value);
+  const tea = parseFloat(document.getElementById('sim-tea').value)/100;
+  const plazo = parseInt(document.getElementById('sim-plazo').value);
+  const tipo = document.getElementById('sim-tipo').value;
+  const tem = Math.pow(1+tea, 1/12)-1;
+  let cuota, totalInteres, totalPagar;
+  if(tipo==='frances'){
+    cuota = monto*tem*Math.pow(1+tem,plazo)/(Math.pow(1+tem,plazo)-1);
+    totalPagar = cuota*plazo;
+    totalInteres = totalPagar-monto;
+  } else if(tipo==='aleman'){
+    const capitalMensual = monto/plazo;
+    cuota = capitalMensual + monto*tem; // primera cuota
+    totalInteres = Array.from({length:plazo},(_,i)=>((monto-capitalMensual*i)*tem)).reduce((a,b)=>a+b,0);
+    totalPagar = monto+totalInteres;
+  } else {
+    cuota = monto*tem;
+    totalInteres = cuota*plazo;
+    totalPagar = monto+totalInteres;
+  }
+  document.getElementById('sim-resultado').innerHTML = `
+    <div class="card-h"><div class="card-title">Resultado del simulador</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--jade);">S/ ${cuota.toFixed(2)}</div><div style="font-size:10px;color:var(--muted);">Cuota ${tipo==='aleman'?'inicial':tipo==='americano'?'mensual':'mensual'}</div></div>
+      <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--warning);">S/ ${totalInteres.toFixed(2)}</div><div style="font-size:10px;color:var(--muted);">Total intereses</div></div>
+      <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--info);">S/ ${totalPagar.toFixed(2)}</div><div style="font-size:10px;color:var(--muted);">Total a pagar</div></div>
+      <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--text);">${plazo} meses</div><div style="font-size:10px;color:var(--muted);">Plazo total</div></div>
+    </div>
+    <button class="btn-p" style="width:100%;justify-content:center;" onclick="genCronograma()">Ver cronograma completo</button>`;
+  initFinChart();
+}
+function genCronograma(){
+  const monto = parseFloat(document.getElementById('sim-monto').value);
+  const tea = parseFloat(document.getElementById('sim-tea').value)/100;
+  const plazo = parseInt(document.getElementById('sim-plazo').value);
+  const tem = Math.pow(1+tea, 1/12)-1;
+  const cuota = monto*tem*Math.pow(1+tem,plazo)/(Math.pow(1+tem,plazo)-1);
+  let saldo = monto;
+  let rows = '';
+  for(let i=1;i<=plazo;i++){
+    const interes = saldo*tem;
+    const capital = cuota-interes;
+    saldo -= capital;
+    rows += `<tr><td>${i}</td><td>S/ ${cuota.toFixed(2)}</td><td style="color:var(--jade);">S/ ${capital.toFixed(2)}</td><td style="color:var(--warning);">S/ ${interes.toFixed(2)}</td><td>S/ ${Math.max(0,saldo).toFixed(2)}</td></tr>`;
+  }
+  document.getElementById('tbody-cronograma').innerHTML = rows;
+  // switch tab
+  document.querySelectorAll('#scr-financiamiento .tab').forEach((t,i)=>{t.classList.remove('active');if(i===2)t.classList.add('active');});
+  document.getElementById('fin-resumen').style.display='none';
+  document.getElementById('fin-simulador').style.display='none';
+  document.getElementById('fin-cronograma').style.display='';
+}
+
+/* ═══════ MODAL ═══════ */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+/* ═══════ TOAST ═══════ */
+let toastT;
+function showToast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast '+type+' show';
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+/* ═══════ INIT ═══════ */
+function initApp(){
+  initDashCharts();
+}
+</script>
+</body>
+</html>
